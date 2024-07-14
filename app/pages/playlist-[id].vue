@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { formatTimeAgo } from '@vueuse/core';
+import { ArrowLeftIcon } from '@radix-icons/vue';
 import type { Playlists } from '~/models/playlist';
 
 const route = useRoute('playlist-id');
@@ -9,15 +10,28 @@ const { data } = await useSpotifyFetch<Playlists>(`/playlists/${id}`);
 </script>
 
 <template>
-  <div class="flex flex-col gap-8">
-    <div class="flex gap-2">
+  <div class="relative flex flex-col gap-4">
+    <Button
+      as-child
+      class="w-fit"
+    >
+      <NuxtLink
+        to="/"
+        class="flex items-center"
+      >
+        <ArrowLeftIcon class="mr-2 size-4" />
+        Back
+      </NuxtLink>
+    </Button>
+
+    <div class="z-50 flex gap-2">
       <img
         :src="data?.images?.at(0)?.url"
-        class="transition-all rounded shadow size-64 hover:size-96"
+        class="transition-all rounded shadow size-64"
         :style="{ viewTransitionName: `cover-${id}` }"
       >
 
-      <div class="p-2">
+      <div class="flex flex-col p-2">
         <p class="text-xl font-semibold">
           {{ data?.name }}
         </p>
@@ -30,6 +44,13 @@ const { data } = await useSpotifyFetch<Playlists>(`/playlists/${id}`);
             {{ data?.tracks.total }} songs
           </li>
         </ul>
+
+        <a
+          :href="data?.owner.uri"
+          class="mt-auto opacity-50"
+        >
+          Playlist by {{ data?.owner.display_name }}
+        </a>
       </div>
     </div>
 
@@ -56,5 +77,10 @@ const { data } = await useSpotifyFetch<Playlists>(`/playlists/${id}`);
         </div>
       </li>
     </ol>
+
+    <img
+      :src="data?.images?.at(0)?.url"
+      class="absolute object-cover w-full blur-[200px] h-72 pointer-events-none"
+    >
   </div>
 </template>

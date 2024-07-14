@@ -28,6 +28,9 @@ export default defineNuxtConfig({
   experimental: {
     viewTransition: true,
   },
+  tailwindcss: {
+    cssPath: '~/assets/css/tailwind.css',
+  },
   future: {
     compatibilityVersion: 4,
   },

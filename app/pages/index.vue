@@ -21,7 +21,10 @@ const { data, status, execute } = await useSpotifyFetch<SearchResponse>('/search
   immediate: false,
 });
 
-watch(queryDebounced, () => execute());
+watch(queryDebounced, () => {
+  if (!queryDebounced.value) return;
+  execute();
+});
 
 onMounted(async () => {
   if (!code) return;
@@ -79,11 +82,11 @@ onMounted(async () => {
         <li
           v-for="item in data.playlists.items"
           :key="item.id"
-          class="p-2 rounded hover:bg-neutral-200"
+          class="rounded hover:bg-neutral-200"
         >
           <NuxtLink
             :to="{ name: 'playlist-id', params: { id: item.id } }"
-            class="flex items-center gap-2 text-left"
+            class="flex items-center w-full gap-2 p-2 text-left"
           >
             <img
               :src="item.images?.at(0)?.url"

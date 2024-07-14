@@ -1,4 +1,6 @@
+import type { Pagination } from './pagination';
 import type { Image, ExternalUrls } from './shared';
+import type { TrackItem } from './track';
 
 export interface Playlist {
   collaborative: boolean;
@@ -14,6 +16,14 @@ export interface Playlist {
   tracks: Tracks;
   type: string;
   uri: string;
+}
+
+export interface Playlists extends Playlist {
+  tracks: Pagination<TrackItem>;
+  followers: {
+    href: string | null;
+    total: number;
+  };
 }
 
 export interface Owner {

@@ -81,10 +81,14 @@ onMounted(async () => {
           :key="item.id"
           class="p-2 rounded hover:bg-neutral-200"
         >
-          <button class="flex items-center gap-2 text-left">
+          <NuxtLink
+            :to="{ name: 'playlist-id', params: { id: item.id } }"
+            class="flex items-center gap-2 text-left"
+          >
             <img
               :src="item.images?.at(0)?.url"
               class="object-cover rounded size-20"
+              :style="{ viewTransitionName: `cover-${item.id}` }"
             >
 
             <div>
@@ -93,7 +97,7 @@ onMounted(async () => {
                 By {{ item.owner.display_name }}
               </p>
             </div>
-          </button>
+          </NuxtLink>
         </li>
       </ol>
     </div>

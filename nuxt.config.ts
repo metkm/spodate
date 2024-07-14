@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     'shadcn-nuxt',
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
+    'nuxt-typed-router',
   ],
   runtimeConfig: {
     SPOTIFY_CLIENT_SECRET: '',
@@ -23,6 +24,9 @@ export default defineNuxtConfig({
         semi: true,
       },
     },
+  },
+  experimental: {
+    viewTransition: true,
   },
   future: {
     compatibilityVersion: 4,

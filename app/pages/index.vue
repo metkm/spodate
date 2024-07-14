@@ -12,7 +12,7 @@ const loading = ref(false);
 const query = ref('');
 const queryDebounced = refDebounced(query, 1000);
 
-const { data, status, execute } = await useSpotifyFetch<SearchResponse>('/search', {
+const { data, status, execute, clear } = await useSpotifyFetch<SearchResponse>('/search', {
   query: {
     q: queryDebounced,
     type: 'playlist',
@@ -22,7 +22,11 @@ const { data, status, execute } = await useSpotifyFetch<SearchResponse>('/search
 });
 
 watch(queryDebounced, () => {
-  if (!queryDebounced.value) return;
+  if (!queryDebounced.value) {
+    clear();
+    return;
+  }
+
   execute();
 });
 

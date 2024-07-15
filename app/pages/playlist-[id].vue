@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { formatTimeAgo } from '@vueuse/core';
+import { formatTimeAgo, createReusableTemplate, useImage } from '@vueuse/core';
 import { ArrowLeftIcon } from '@radix-icons/vue';
 import type { Playlists } from '~/models/playlist';
 
@@ -7,6 +7,9 @@ const route = useRoute('playlist-id');
 const id = route.params.id;
 
 const { data } = await useSpotifyFetch<Playlists>(`/playlists/${id}`);
+const { isReady } = useImage({ src: data.value?.images?.at(0)?.url || '' });
+
+const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
 </script>
 
 <template>
@@ -27,7 +30,7 @@ const { data } = await useSpotifyFetch<Playlists>(`/playlists/${id}`);
     <div class="z-50 flex gap-2">
       <img
         :src="data?.images?.at(0)?.url"
-        class="transition-all rounded shadow size-64"
+        class="object-cover transition-all rounded shadow size-64"
         :style="{ viewTransitionName: `cover-${id}` }"
       >
 
@@ -37,12 +40,8 @@ const { data } = await useSpotifyFetch<Playlists>(`/playlists/${id}`);
         </p>
 
         <ul class="flex gap-8 pl-5 list-disc opacity-50">
-          <li>
-            {{ data?.followers.total }} saves
-          </li>
-          <li>
-            {{ data?.tracks.total }} songs
-          </li>
+          <li>{{ data?.followers.total }} saves</li>
+          <li>{{ data?.tracks.total }} songs</li>
         </ul>
 
         <a
@@ -56,20 +55,20 @@ const { data } = await useSpotifyFetch<Playlists>(`/playlists/${id}`);
 
     <ol
       v-if="data"
-      class="divide-y"
+      class="divide-y divide-opacity-40"
     >
       <li
         v-for="item in data.tracks.items"
-        :key="item.track.id"
-        class="flex items-center gap-2 p-2 hover:bg-neutral-200"
+        :key="item.track?.id"
+        class="flex items-center gap-2 p-2 hover:bg-neutral-200/20"
       >
         <img
-          :src="item.track.album.images.at(0)?.url"
+          :src="item.track?.album?.images.at(0)?.url"
           class="object-cover rounded size-20"
         >
 
         <div>
-          <p>{{ item.track.name }}</p>
+          <p>{{ item.track?.name }}</p>
 
           <p class="text-sm opacity-50">
             {{ formatTimeAgo(new Date(item.added_at)) }} - {{ item.added_at }}
@@ -78,9 +77,34 @@ const { data } = await useSpotifyFetch<Playlists>(`/playlists/${id}`);
       </li>
     </ol>
 
-    <img
-      :src="data?.images?.at(0)?.url"
-      class="absolute object-cover w-full blur-[200px] h-72 pointer-events-none"
+    <DefineTemplate>
+      <img
+        :src="data?.images?.at(0)?.url"
+        class="absolute object-cover w-1/2 rounded-full aspect-square animate-spin blur-[120px] duration-15000"
+      >
+    </DefineTemplate>
+
+    <div
+      v-if="isReady"
+      class="absolute inset-0 pointer-events-none animation-appear -z-10"
     >
+      <ReuseTemplate class="direction-reverse" />
+      <ReuseTemplate class="right-0 w-3/5" />
+    </div>
   </div>
 </template>
+
+<style>
+.animation-appear {
+  animation: appear 2.5s cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+@keyframes appear {
+  0% {
+    opacity: 0%;
+  }
+  100% {
+    opacity: 100%;
+  }
+}
+</style>

@@ -1,4 +1,4 @@
-const animate = require('tailwindcss-animate')
+const animate = require('tailwindcss-animate');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -51,7 +51,7 @@ module.exports = {
         },
       },
       borderRadius: {
-      	xl: 'calc(var(--radius) + 4px)',
+        xl: 'calc(var(--radius) + 4px)',
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
@@ -80,7 +80,12 @@ module.exports = {
         'collapsible-down': 'collapsible-down 0.2s ease-in-out',
         'collapsible-up': 'collapsible-up 0.2s ease-in-out',
       },
+      transitionDuration: {
+        15000: '15000ms',
+        8000: '8000ms',
+        4000: '4000ms',
+      },
     },
   },
   plugins: [animate],
-}
+};

@@ -3,6 +3,7 @@ import { formatTimeAgo, createReusableTemplate, useImage } from '@vueuse/core';
 import { ArrowLeftIcon } from '@radix-icons/vue';
 import type { Playlists } from '~/models/playlist';
 
+const router = useRouter();
 const route = useRoute('playlist-id');
 const id = route.params.id;
 
@@ -15,16 +16,11 @@ const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
 <template>
   <div class="relative flex flex-col gap-4">
     <Button
-      as-child
       class="w-fit"
+      @click="router.back()"
     >
-      <NuxtLink
-        to="/"
-        class="flex items-center"
-      >
-        <ArrowLeftIcon class="mr-2 size-4" />
-        Back
-      </NuxtLink>
+      <ArrowLeftIcon class="mr-2 size-4" />
+      Back
     </Button>
 
     <template v-if="data">

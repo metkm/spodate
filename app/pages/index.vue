@@ -99,8 +99,16 @@ onMounted(async () => {
             >
 
             <div>
-              <p>{{ item.name }}</p>
-              <p class="text-sm opacity-50">
+              <p
+                class="w-fit"
+                :style="{ viewTransitionName: `title-${removeSpecialCharacters(item.name)}-${item.id}` }"
+              >
+                {{ item.name }}
+              </p>
+              <p
+                class="text-sm opacity-50 w-fit"
+                :style="{ viewTransitionName: `by-${removeSpecialCharacters(item.owner.display_name)}-${item.id}` }"
+              >
                 By {{ item.owner.display_name }}
               </p>
             </div>

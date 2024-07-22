@@ -1,14 +1,38 @@
 <script setup lang="ts">
-import { formatTimeAgo, createReusableTemplate, useImage } from '@vueuse/core';
+import { formatTimeAgo, createReusableTemplate, useImage, useInfiniteScroll } from '@vueuse/core';
 import { ArrowLeftIcon } from '@radix-icons/vue';
 import type { Playlists } from '~/models/playlist';
+import type { Pagination } from '~/models/pagination';
+import type { TrackItem } from '~/models/track';
 
 const router = useRouter();
 const route = useRoute('playlist-id');
 const id = route.params.id;
 
+const config = useRuntimeConfig();
+const tokenStore = useTokenStore();
 const { data, error } = await useSpotifyFetch<Playlists>(`/playlists/${id}`);
 const { isReady } = useImage({ src: data.value?.images?.at(0)?.url || '' });
+
+let offset = 20;
+const { isLoading } = useInfiniteScroll(document, async () => {
+  const response = await $fetch<Pagination<TrackItem>>(`${config.public.SPOTIFY_BASE_URI}/playlists/${id}/tracks`, {
+    query: {
+      offset,
+    },
+    headers: {
+      Authorization: `Bearer ${tokenStore.accessToken}`,
+    },
+  });
+
+  data.value?.tracks.items.push(...response.items);
+  offset += 20;
+}, {
+  canLoadMore: () => {
+    console.log(data.value?.tracks.total);
+    return data.value ? (offset < data.value?.tracks.total) : false;
+  },
+});
 
 const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
 </script>
@@ -24,7 +48,7 @@ const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
     </Button>
 
     <template v-if="data">
-      <div class="z-50 flex gap-2">
+      <div class="z-50 flex flex-wrap gap-2">
         <img
           :src="data?.images?.at(0)?.url"
           class="object-cover transition-all rounded shadow size-64"
@@ -60,10 +84,12 @@ const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
 
       <ol class="divide-y divide-opacity-40">
         <li
-          v-for="item in data.tracks.items"
+          v-for="(item, index) in data.tracks.items"
           :key="item.track?.id"
           class="flex items-center gap-2 p-2 hover:bg-neutral-200/20"
         >
+          <p>#{{ index }}</p>
+
           <img
             :src="item.track?.album?.images.at(0)?.url"
             class="object-cover rounded size-20"
@@ -78,6 +104,10 @@ const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
           </div>
         </li>
       </ol>
+
+      <p v-if="isLoading">
+        Loading...
+      </p>
     </template>
     <p v-else>
       Something happened while loading the playlist {{ error }}

@@ -96,8 +96,10 @@ const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
             class="object-cover rounded size-20"
           >
 
-          <div>
-            <p>{{ item.track?.name }}</p>
+          <div class="w-full overflow-x-hidden">
+            <p>
+              {{ item.track?.name }}
+            </p>
 
             <p class="text-sm opacity-50">
               {{ formatTimeAgo(new Date(item.added_at)) }} - {{ item.added_at }}

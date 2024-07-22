@@ -87,7 +87,7 @@ const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
           :key="item.track?.id"
           class="flex items-center gap-4 p-2 hover:bg-neutral-200/20"
         >
-          <p class="w-10 text-right ">
+          <p class="w-8 text-right shrink-0">
             #{{ index + 1 }}
           </p>
 

@@ -14,7 +14,7 @@ const tokenStore = useTokenStore();
 const { data, error } = await useSpotifyFetch<Playlists>(`/playlists/${id}`);
 const { isReady } = useImage({ src: data.value?.images?.at(0)?.url || '' });
 
-let offset = 20;
+let offset = data.value?.tracks.items.length || 20;
 const { isLoading } = useInfiniteScroll(document, async () => {
   const response = await $fetch<Pagination<TrackItem>>(`${config.public.SPOTIFY_BASE_URI}/playlists/${id}/tracks`, {
     query: {
@@ -29,7 +29,6 @@ const { isLoading } = useInfiniteScroll(document, async () => {
   offset += 20;
 }, {
   canLoadMore: () => {
-    console.log(data.value?.tracks.total);
     return data.value ? (offset < data.value?.tracks.total) : false;
   },
 });
@@ -86,9 +85,11 @@ const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
         <li
           v-for="(item, index) in data.tracks.items"
           :key="item.track?.id"
-          class="flex items-center gap-2 p-2 hover:bg-neutral-200/20"
+          class="flex items-center gap-4 p-2 hover:bg-neutral-200/20"
         >
-          <p>#{{ index }}</p>
+          <p class="w-10 text-right ">
+            #{{ index + 1 }}
+          </p>
 
           <img
             :src="item.track?.album?.images.at(0)?.url"

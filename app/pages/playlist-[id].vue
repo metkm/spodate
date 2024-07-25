@@ -37,7 +37,7 @@ const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
 </script>
 
 <template>
-  <div class="relative flex flex-col gap-4">
+  <div class="flex flex-col gap-4">
     <Button
       class="w-fit"
       @click="router.back()"
@@ -125,7 +125,7 @@ const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
 
     <div
       v-if="isReady"
-      class="absolute inset-0 pointer-events-none animation-appear -z-10"
+      class="absolute inset-0 max-w-4xl mx-auto pointer-events-none animation-appear -z-10"
     >
       <ReuseTemplate class="direction-reverse" />
       <ReuseTemplate class="right-0 w-3/5" />

@@ -81,7 +81,7 @@ const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
         </div>
       </div>
 
-      <ol class="divide-y divide-opacity-40">
+      <ol>
         <li
           v-for="(item, index) in data.tracks.items"
           :key="item.track?.id"

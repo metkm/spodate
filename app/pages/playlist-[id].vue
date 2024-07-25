@@ -14,11 +14,14 @@ const tokenStore = useTokenStore();
 const { data, error } = await useSpotifyFetch<Playlists>(`/playlists/${id}`);
 const { isReady } = useImage({ src: data.value?.images?.at(0)?.url || '' });
 
-let offset = data.value?.tracks.items.length || 20;
+const LIMIT = 20;
+
+let offset = data.value?.tracks.items.length || LIMIT;
 const { isLoading } = useInfiniteScroll(document, async () => {
   const response = await $fetch<Pagination<TrackItem>>(`${config.public.SPOTIFY_BASE_URI}/playlists/${id}/tracks`, {
     query: {
       offset,
+      limit: LIMIT,
     },
     headers: {
       Authorization: `Bearer ${tokenStore.accessToken}`,

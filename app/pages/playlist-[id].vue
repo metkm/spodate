@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { formatTimeAgo, createReusableTemplate, useImage, useInfiniteScroll } from '@vueuse/core';
-import { ArrowLeftIcon } from '@radix-icons/vue';
+import { ArrowLeftIcon, ReloadIcon } from '@radix-icons/vue';
 import type { Playlist, Playlists } from '~/models/playlist';
 import type { Pagination } from '~/models/pagination';
 import type { TrackItem } from '~/models/track';
@@ -101,7 +101,7 @@ const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
 
       <ReloadIcon
         v-if="status === 'pending'"
-        class="size-[18px] text-muted-foreground animate-spin"
+        class="size-7 text-muted-foreground animate-spin"
       />
       <ol v-else>
         <li

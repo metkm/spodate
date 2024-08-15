@@ -1,21 +1,36 @@
 <script setup lang="ts">
 import { formatTimeAgo, createReusableTemplate, useImage, useInfiniteScroll } from '@vueuse/core';
 import { ArrowLeftIcon } from '@radix-icons/vue';
-import type { Playlists } from '~/models/playlist';
+import type { Playlist, Playlists } from '~/models/playlist';
 import type { Pagination } from '~/models/pagination';
 import type { TrackItem } from '~/models/track';
 
+const selectedPlaylist = useState<Playlist>('playlist:selected');
 const router = useRouter();
 const route = useRoute('playlist-id');
 const id = route.params.id;
 
 const config = useRuntimeConfig();
 const tokenStore = useTokenStore();
-const { data, error } = await useSpotifyFetch<Playlists>(`/playlists/${id}`);
+const { data, error, status } = await useSpotifyFetch<Playlists>(`/playlists/${id}`, {
+  lazy: true,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  default: () => (selectedPlaylist.value
+    ? {
+        ...selectedPlaylist.value,
+        tracks: undefined,
+        followers: {
+          href: null,
+          total: 0,
+        },
+      }
+    : undefined),
+});
 const { isReady } = useImage({ src: data.value?.images?.at(0)?.url || '' });
 
 const LIMIT = 20;
-let offset = data.value?.tracks.items.length || LIMIT;
+let offset = data.value?.tracks?.items?.length || LIMIT;
 
 const { isLoading } = useInfiniteScroll(document, async () => {
   const response = await $fetch<Pagination<TrackItem>>(`${config.public.SPOTIFY_BASE_URI}/playlists/${id}/tracks`, {
@@ -28,11 +43,11 @@ const { isLoading } = useInfiniteScroll(document, async () => {
     },
   });
 
-  data.value?.tracks.items.push(...response.items);
+  data.value?.tracks?.items.push(...response.items);
   offset += 20;
 }, {
   canLoadMore: () => {
-    return data.value ? (offset < data.value?.tracks.total) : false;
+    return data.value?.tracks ? (offset < data.value?.tracks?.total) : false;
   },
 });
 
@@ -69,7 +84,7 @@ const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
 
           <ul class="flex gap-8 pl-5 list-disc opacity-50">
             <li>{{ data?.followers.total }} saves</li>
-            <li>{{ data?.tracks.total }} songs</li>
+            <li>{{ data?.tracks?.total }} songs</li>
           </ul>
 
           <a
@@ -84,9 +99,13 @@ const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
         </div>
       </div>
 
-      <ol>
+      <ReloadIcon
+        v-if="status === 'pending'"
+        class="size-[18px] text-muted-foreground animate-spin"
+      />
+      <ol v-else>
         <li
-          v-for="(item, index) in data.tracks.items"
+          v-for="(item, index) in data.tracks?.items"
           :key="item.track?.id"
           class="flex items-center gap-4 p-2 hover:bg-neutral-200/20"
         >

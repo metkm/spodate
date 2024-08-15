@@ -13,13 +13,13 @@ export interface Playlist {
   owner: Owner;
   public: boolean;
   snapshot_id: string;
-  tracks: Tracks;
+  tracks?: Tracks;
   type: string;
   uri: string;
 }
 
 export interface Playlists extends Playlist {
-  tracks: Pagination<TrackItem>;
+  tracks?: Pagination<TrackItem>;
   followers: {
     href: string | null;
     total: number;

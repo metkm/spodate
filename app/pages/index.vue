@@ -2,12 +2,14 @@
 import { MagnifyingGlassIcon, ReloadIcon } from '@radix-icons/vue';
 import { refDebounced } from '@vueuse/core';
 import type { SearchResponse } from '~/models/search';
+import type { Playlist } from '~/models/playlist';
 import type { Tokens } from '~/models/tokens';
 
 const tokenStore = useTokenStore();
 const route = useRoute();
 const code = route.query.code?.toString();
 
+const selectedPlaylist = useState<Playlist>('playlist:selected');
 const loading = ref(false);
 const query = ref('');
 const queryDebounced = refDebounced(query, 1000);
@@ -91,6 +93,7 @@ onMounted(async () => {
           <NuxtLink
             :to="{ name: 'playlist-id', params: { id: item.id } }"
             class="flex items-center w-full gap-2 p-2 text-left"
+            @click="selectedPlaylist = item"
           >
             <img
               :src="item.images?.at(0)?.url"

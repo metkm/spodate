@@ -2,7 +2,7 @@ import type { UseFetchOptions } from 'nuxt/app';
 
 export const useSpotifyFetch = <T>(
   url: string | (() => string),
-  options?: Omit<UseFetchOptions<T>, 'default'>,
+  options?: UseFetchOptions<T, T>,
 ) => {
   const config = useRuntimeConfig();
   const tokenStore = useTokenStore();

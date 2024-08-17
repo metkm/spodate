@@ -1,55 +1,77 @@
 <script setup lang="ts">
-import { formatTimeAgo, createReusableTemplate, useImage, useInfiniteScroll } from '@vueuse/core';
+import {
+  formatTimeAgo,
+  createReusableTemplate,
+  useImage,
+  useInfiniteScroll,
+} from '@vueuse/core';
 import { ArrowLeftIcon, ReloadIcon } from '@radix-icons/vue';
-import type { Playlist, Playlists } from '~/models/playlist';
+import type { UseFetchOptions } from 'nuxt/app';
+import type { Playlists } from '~/models/playlist';
 import type { Pagination } from '~/models/pagination';
 import type { TrackItem } from '~/models/track';
+import type { SearchResponse } from '~/models/search';
 
-const selectedPlaylist = useState<Playlist>('playlist:selected');
 const router = useRouter();
 const route = useRoute('playlist-id');
 const id = route.params.id;
 
 const config = useRuntimeConfig();
 const tokenStore = useTokenStore();
-const { data, error, status } = await useSpotifyFetch<Playlists>(`/playlists/${id}`, {
-  lazy: true,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  default: () => (selectedPlaylist.value
-    ? {
-        ...selectedPlaylist.value,
+const { data: cachePlaylists } = useNuxtData<SearchResponse>('playlists');
+
+const { data, error, status } = await useSpotifyFetch<Playlists>(
+  `/playlists/${id}`,
+  {
+    lazy: true,
+    default: () => {
+      const found = cachePlaylists.value?.playlists.items.find(
+        item => item.id === id,
+      );
+
+      if (!found) return;
+
+      return {
+        ...found,
         tracks: undefined,
         followers: {
           href: null,
           total: 0,
         },
-      }
-    : undefined),
-});
+      };
+    },
+  } as UseFetchOptions<Playlists>,
+);
 const { isReady } = useImage({ src: data.value?.images?.at(0)?.url || '' });
 
 const LIMIT = 20;
 let offset = data.value?.tracks?.items?.length || LIMIT;
 
-const { isLoading } = useInfiniteScroll(document, async () => {
-  const response = await $fetch<Pagination<TrackItem>>(`${config.public.SPOTIFY_BASE_URI}/playlists/${id}/tracks`, {
-    query: {
-      offset,
-      limit: LIMIT,
-    },
-    headers: {
-      Authorization: `Bearer ${tokenStore.accessToken}`,
-    },
-  });
+const { isLoading } = useInfiniteScroll(
+  document,
+  async () => {
+    const response = await $fetch<Pagination<TrackItem>>(
+      `${config.public.SPOTIFY_BASE_URI}/playlists/${id}/tracks`,
+      {
+        query: {
+          offset,
+          limit: LIMIT,
+        },
+        headers: {
+          Authorization: `Bearer ${tokenStore.accessToken}`,
+        },
+      },
+    );
 
-  data.value?.tracks?.items.push(...response.items);
-  offset += 20;
-}, {
-  canLoadMore: () => {
-    return data.value?.tracks ? (offset < data.value?.tracks?.total) : false;
+    data.value?.tracks?.items.push(...response.items);
+    offset += 20;
   },
-});
+  {
+    canLoadMore: () => {
+      return data.value?.tracks ? offset < data.value?.tracks?.total : false;
+    },
+  },
+);
 
 const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
 </script>

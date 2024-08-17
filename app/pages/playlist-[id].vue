@@ -104,10 +104,17 @@ const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
             {{ data?.name }}
           </p>
 
-          <ul class="flex gap-8 pl-5 list-disc opacity-50">
+          <ul
+            v-if="status !== 'pending'"
+            class="flex gap-8 pl-5 list-disc opacity-50"
+          >
             <li>{{ data?.followers.total }} saves</li>
             <li>{{ data?.tracks?.total }} songs</li>
           </ul>
+          <div
+            v-else
+            class="h-4 mt-2 rounded-full bg-neutral-200 animate-pulse w-44"
+          />
 
           <a
             :href="data?.owner.uri"

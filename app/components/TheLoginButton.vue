@@ -21,7 +21,7 @@ const redirectUri = url.toString();
     <a :href="redirectUri">
       <ReloadIcon
         v-if="loading"
-        class="w-4 h-4 mr-2 animate-spin"
+        class="mr-2 animate-spin"
       />
       Login
     </a>

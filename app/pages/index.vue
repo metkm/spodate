@@ -72,7 +72,7 @@ onMounted(async () => {
         <span class="absolute inset-y-0 flex items-center justify-center px-2 start-0">
           <ReloadIcon
             v-if="status === 'pending'"
-            class="size-[18px] text-muted-foreground animate-spin"
+            class="p-[1px] text-muted-foreground size-5 animate-spin mt-[0.5px]"
           />
           <MagnifyingGlassIcon
             v-else

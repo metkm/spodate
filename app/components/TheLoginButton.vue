@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ReloadIcon } from '@radix-icons/vue';
-
 defineProps<{
   loading?: boolean;
 }>();
@@ -17,13 +15,7 @@ const redirectUri = url.toString();
 </script>
 
 <template>
-  <Button as-child>
-    <a :href="redirectUri">
-      <ReloadIcon
-        v-if="loading"
-        class="mr-2 animate-spin"
-      />
-      Login
-    </a>
-  </Button>
+  <UButton :to="redirectUri">
+    Login
+  </UButton>
 </template>

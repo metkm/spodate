@@ -5,7 +5,6 @@ import {
   useImage,
   useInfiniteScroll,
 } from '@vueuse/core';
-import { ArrowLeftIcon, ReloadIcon } from '@radix-icons/vue';
 import type { UseFetchOptions } from 'nuxt/app';
 import type { Playlists } from '~/models/playlist';
 import type { Pagination } from '~/models/pagination';
@@ -78,13 +77,14 @@ const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
 
 <template>
   <div class="flex flex-col gap-4">
-    <Button
+    <UButton
+      leading-icon="i-heroicons-arrow-left-circle"
+      variant="soft"
       class="w-fit"
       @click="router.back()"
     >
-      <ArrowLeftIcon class="mr-2 size-4" />
       Back
-    </Button>
+    </UButton>
 
     <template v-if="data">
       <div class="z-50 flex flex-wrap gap-2">
@@ -128,15 +128,16 @@ const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
         </div>
       </div>
 
-      <ReloadIcon
+      <UIcon
         v-if="status === 'pending'"
+        name="i-heroicons-arrow-path-16-solid"
         class="size-7 text-muted-foreground animate-spin"
       />
       <ol v-else>
         <li
           v-for="(item, index) in data.tracks?.items"
           :key="item.track?.id"
-          class="flex items-center gap-4 p-2 hover:bg-neutral-200/20"
+          class="flex items-center gap-4 p-2 hover:bg-neutral-200/20 rounded"
         >
           <p class="w-8 text-right shrink-0">
             #{{ index + 1 }}
@@ -170,7 +171,7 @@ const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
     <DefineTemplate>
       <img
         :src="data?.images?.at(0)?.url"
-        class="absolute object-cover w-1/2 rounded-full aspect-square animate-spin blur-[120px] duration-15000"
+        class="absolute object-cover w-1/2 rounded-full aspect-square animate-cover-spin blur-[120px] duration-15000"
       >
     </DefineTemplate>
 

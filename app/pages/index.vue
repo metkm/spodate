@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { MagnifyingGlassIcon, ReloadIcon } from '@radix-icons/vue';
 import { refDebounced } from '@vueuse/core';
 import type { SearchResponse } from '~/models/search';
 import type { Tokens } from '~/models/tokens';
@@ -12,15 +11,18 @@ const loading = ref(false);
 const query = ref('');
 const queryDebounced = refDebounced(query, 1000);
 
-const { data, status, execute, clear } = await useSpotifyFetch<SearchResponse>('/search', {
-  key: 'playlists',
-  query: {
-    q: queryDebounced,
-    type: 'playlist',
+const { data, status, execute, clear } = await useSpotifyFetch<SearchResponse>(
+  '/search',
+  {
+    key: 'playlists',
+    query: {
+      q: queryDebounced,
+      type: 'playlist',
+    },
+    watch: false,
+    immediate: false,
   },
-  watch: false,
-  immediate: false,
-});
+);
 
 watch(queryDebounced, () => {
   if (!queryDebounced.value) {
@@ -61,61 +63,55 @@ onMounted(async () => {
       />
 
       <div class="relative items-center w-full">
-        <Input
+        <UInput
           id="search"
           v-model="query"
           type="text"
           placeholder="Search..."
-          class="pl-10"
+          leading-icon="i-heroicons-magnifying-glass-16-solid"
+          size="lg"
           :disabled="!tokenStore.accessToken"
+          :loading="status === 'pending'"
         />
-        <span class="absolute inset-y-0 flex items-center justify-center px-2 start-0">
-          <ReloadIcon
-            v-if="status === 'pending'"
-            class="p-[1px] text-muted-foreground size-5 animate-spin mt-[0.5px]"
-          />
-          <MagnifyingGlassIcon
-            v-else
-            class="size-6 text-muted-foreground"
-          />
-        </span>
       </div>
     </div>
 
-    <div v-if="data">
-      <ol class="divide-y">
-        <li
-          v-for="item in data.playlists.items"
-          :key="item.id"
-          class="rounded hover:bg-neutral-200"
+    <ol v-if="data">
+      <li
+        v-for="item in data.playlists.items"
+        :key="item.id"
+        class="rounded hover:bg-neutral-200/20"
+      >
+        <NuxtLink
+          :to="{ name: 'playlist-id', params: { id: item.id } }"
+          class="flex items-center w-full gap-2 p-2 text-left"
         >
-          <NuxtLink
-            :to="{ name: 'playlist-id', params: { id: item.id } }"
-            class="flex items-center w-full gap-2 p-2 text-left"
+          <img
+            :src="item.images?.at(0)?.url"
+            class="object-cover rounded size-20"
+            :style="{ viewTransitionName: `cover-${item.id}` }"
           >
-            <img
-              :src="item.images?.at(0)?.url"
-              class="object-cover rounded size-20"
-              :style="{ viewTransitionName: `cover-${item.id}` }"
-            >
 
-            <div>
-              <p
-                class="w-fit"
-                :style="{ viewTransitionName: `title-${removeSpecialCharacters(item.name)}-${item.id}` }"
-              >
-                {{ item.name }}
-              </p>
-              <p
-                class="text-sm opacity-50 w-fit"
-                :style="{ viewTransitionName: `by-${removeSpecialCharacters(item.owner.display_name)}-${item.id}` }"
-              >
-                By {{ item.owner.display_name }}
-              </p>
-            </div>
-          </NuxtLink>
-        </li>
-      </ol>
-    </div>
+          <div>
+            <p
+              class="w-fit"
+              :style="{
+                viewTransitionName: `title-${removeSpecialCharacters(item.name)}-${item.id}`,
+              }"
+            >
+              {{ item.name }}
+            </p>
+            <p
+              class="text-sm opacity-50 w-fit"
+              :style="{
+                viewTransitionName: `by-${removeSpecialCharacters(item.owner.display_name)}-${item.id}`,
+              }"
+            >
+              By {{ item.owner.display_name }}
+            </p>
+          </div>
+        </NuxtLink>
+      </li>
+    </ol>
   </div>
 </template>

@@ -11,22 +11,17 @@
   },
   "dependencies": {
     "@nuxt/eslint": "^0.3.13",
+    "@nuxt/ui": "^2.18.4",
     "@pinia/nuxt": "^0.5.1",
-    "@radix-icons/vue": "^1.0.0",
     "@vueuse/core": "^10.11.0",
-    "class-variance-authority": "^0.7.0",
-    "clsx": "^2.1.1",
     "nuxt": "^3.12.3",
     "nuxt-typed-router": "^3.6.5",
     "pinia": "^2.1.7",
-    "radix-vue": "^1.9.1",
-    "shadcn-nuxt": "^0.10.4",
-    "tailwind-merge": "^2.4.0",
-    "tailwindcss-animate": "^1.0.7",
     "vue": "latest"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.12.1",
-    "@pinia-plugin-persistedstate/nuxt": "^1.2.1"
+    "@pinia-plugin-persistedstate/nuxt": "^1.2.1",
+    "tailwindcss": "^3.4.10"
   }
 }

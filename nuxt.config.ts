@@ -3,12 +3,11 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
   modules: [
-    '@nuxtjs/tailwindcss',
     '@nuxt/eslint',
-    'shadcn-nuxt',
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
     'nuxt-typed-router',
+    '@nuxt/ui',
   ],
   runtimeConfig: {
     SPOTIFY_CLIENT_SECRET: '',
@@ -30,19 +29,9 @@ export default defineNuxtConfig({
   },
   tailwindcss: {
     cssPath: '~/assets/css/tailwind.css',
+    configPath: './tailwind.config.ts',
   },
   future: {
     compatibilityVersion: 4,
-  },
-  shadcn: {
-    /**
-     * Prefix for all the imported component
-     */
-    prefix: '',
-    /**
-     * Directory that the component lives in.
-     * @default "./components/ui"
-     */
-    componentDir: './app/components/ui',
   },
 });

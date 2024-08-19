@@ -77,20 +77,20 @@ const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
 
 <template>
   <div class="flex flex-col gap-4">
-    <UButton
-      leading-icon="i-heroicons-arrow-left-circle"
-      variant="soft"
-      class="w-fit"
-      @click="router.back()"
-    >
-      Back
-    </UButton>
-
     <template v-if="data">
-      <div class="z-50 flex flex-wrap gap-2">
+      <div class="fixed top-2 z-50 inset-x-0 flex w-full rounded-lg max-w-4xl p-4 mx-auto gap-2 scroll-anim scroll-background">
+        <UButton
+          leading-icon="i-heroicons-arrow-left-circle"
+          variant="soft"
+          class="w-fit"
+          @click="router.back()"
+        >
+          Back
+        </UButton>
+
         <img
           :src="data?.images?.at(0)?.url"
-          class="object-cover transition-all rounded shadow size-64"
+          class="object-cover size-64 transition-all rounded shadow scroll-anim scroll-cover"
           :style="{ viewTransitionName: `cover-${id}` }"
         >
 
@@ -133,7 +133,10 @@ const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
         name="i-heroicons-arrow-path-16-solid"
         class="size-7 text-muted-foreground animate-spin"
       />
-      <ol v-else>
+      <ol
+        v-else
+        class="mt-72"
+      >
         <li
           v-for="(item, index) in data.tracks?.items"
           :key="item.track?.id"
@@ -188,6 +191,39 @@ const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
 <style>
 .animation-appear {
   animation: appear 2.5s cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+.scroll-cover {
+  animation: cover linear both;
+}
+
+.scroll-background {
+  animation: cover-container linear both;
+}
+
+.scroll-anim {
+  animation-timeline: scroll(root);
+  animation-range: 0px 150px;
+}
+
+@keyframes cover {
+  from {
+    width: 16rem;
+    height: 16rem;
+  }
+  to {
+    width: 8rem;
+    height: 8rem;
+  }
+}
+
+@keyframes cover-container {
+  from {
+    backdrop-filter: blur(0px);
+  }
+  to {
+    backdrop-filter: blur(80px);
+  }
 }
 
 @keyframes appear {

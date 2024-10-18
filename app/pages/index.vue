@@ -3,8 +3,9 @@ import { useRouteQuery } from '@vueuse/router'
 import type { SearchResponse } from '~/models/search'
 
 const route = useRoute()
-
 const query = useRouteQuery('q', '')
+const container = useTemplateRef('container')
+
 const queryDebounced = refDebounced(query, 500)
 
 const { data, status, execute } = await useSpotifyFetch<SearchResponse>('/search', {
@@ -26,6 +27,16 @@ watch(queryDebounced, () => {
 }, {
   immediate: true,
 })
+
+if (import.meta.client) {
+  useInfiniteScroll(document.getElementById('__nuxt'), () => {
+    console.log('at end')
+  }, {
+    distance: 10,
+    throttle: 1000,
+    canLoadMore: () => !!data.value?.playlists.next,
+  })
+}
 </script>
 
 <template>
@@ -36,7 +47,8 @@ watch(queryDebounced, () => {
   />
   <ol
     v-else-if="data"
-    class="space-y-2"
+    ref="container"
+    class="flex flex-col gap-2 overflow-y-auto grow"
   >
     <li
       v-for="item in data?.playlists.items"

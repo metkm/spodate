@@ -6,7 +6,7 @@ const tokenStore = useTokenStore()
 </script>
 
 <template>
-  <main class="flex flex-col gap-4 max-w-4xl min-h-screen p-4 mx-auto overflow-x-hidden">
+  <main class="flex flex-col gap-4 max-w-4xl p-4 mx-auto">
     <NuxtLoadingIndicator />
 
     <div class="flex gap-4 w-full">
@@ -33,7 +33,9 @@ const tokenStore = useTokenStore()
   --font-family-sans: 'Inter', sans-serif;
 }
 
-html {
+#__nuxt {
+  overflow-y: auto;
   scrollbar-gutter: stable;
+  height: 100vh;
 }
 </style>

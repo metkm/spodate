@@ -37,7 +37,7 @@ watch(queryDebounced, () => {
   immediate: true,
 })
 
-useInfiniteScroll(document?.getElementById('__nuxt'), async () => {
+useInfiniteScroll(document, async () => {
   if (!data.value) return
 
   limit.value = data.value.playlists.limit

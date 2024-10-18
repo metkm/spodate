@@ -9,6 +9,9 @@ export default defineNuxtConfig({
     '@nuxt/ui',
   ],
   devtools: { enabled: true },
+  app: {
+    pageTransition: { name: 'page', mode: 'out-in' },
+  },
   runtimeConfig: {
     SPOTIFY_CLIENT_SECRET: '',
     public: {

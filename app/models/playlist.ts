@@ -18,9 +18,9 @@ export interface Playlist {
   uri: string
 }
 
-export interface Playlists extends Playlist {
+export interface PlaylistDetail extends Playlist {
   tracks?: Pagination<TrackItem>
-  followers: {
+  followers?: {
     href: string | null
     total: number
   }

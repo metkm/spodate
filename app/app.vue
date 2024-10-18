@@ -6,7 +6,7 @@ const tokenStore = useTokenStore()
 </script>
 
 <template>
-  <main class="flex flex-col gap-4 max-w-4xl p-4 mx-auto">
+  <main class="flex flex-col gap-4 max-w-4xl p-4 mx-auto text-sm">
     <NuxtLoadingIndicator />
 
     <div class="flex gap-4 w-full">
@@ -33,9 +33,17 @@ const tokenStore = useTokenStore()
   --font-family-sans: 'Inter', sans-serif;
 }
 
-#__nuxt {
-  overflow-y: auto;
+html {
   scrollbar-gutter: stable;
-  height: 100vh;
+}
+
+.page-enter-active,
+.page-leave-active {
+  transition: all 150ms;
+}
+.page-enter-from,
+.page-leave-to {
+  transform: translateY(20px);
+  opacity: 0;
 }
 </style>

@@ -1,4 +1,4 @@
-import type { RouterConfig } from '@nuxt/schema';
+import type { RouterConfig } from '@nuxt/schema'
 
 export default <RouterConfig> {
   // https://router.vuejs.org/api/interfaces/routeroptions.html#routes
@@ -7,9 +7,9 @@ export default <RouterConfig> {
   ],
   scrollBehavior: (to, _, savedPosition) => {
     if (to.name === 'playlist-id') {
-      return { top: 0 };
+      return { top: 0 }
     }
 
-    return savedPosition;
+    return savedPosition
   },
-};
+}

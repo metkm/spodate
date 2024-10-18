@@ -1,18 +1,11 @@
 <script setup lang="ts">
-import { MagnifyingGlassIcon, ReloadIcon } from '@radix-icons/vue';
-import { refDebounced } from '@vueuse/core';
-import type { SearchResponse } from '~/models/search';
-import type { Tokens } from '~/models/tokens';
+import { useRouteQuery } from '@vueuse/router'
+import type { SearchResponse } from '~/models/search'
 
-const tokenStore = useTokenStore();
-const route = useRoute();
-const code = route.query.code?.toString();
+const query = useRouteQuery('q', '')
+const queryDebounced = refDebounced(query, 500)
 
-const loading = ref(false);
-const query = ref('');
-const queryDebounced = refDebounced(query, 1000);
-
-const { data, status, execute, clear } = await useSpotifyFetch<SearchResponse>('/search', {
+const { data, status, execute } = await useSpotifyFetch<SearchResponse>('/search', {
   key: 'playlists',
   query: {
     q: queryDebounced,
@@ -20,102 +13,49 @@ const { data, status, execute, clear } = await useSpotifyFetch<SearchResponse>('
   },
   watch: false,
   immediate: false,
-});
+})
+
+const isLoading = computed(() => status.value === 'pending')
 
 watch(queryDebounced, () => {
-  if (!queryDebounced.value) {
-    clear();
-    return;
+  if (queryDebounced.value) {
+    execute()
   }
-
-  execute();
-});
-
-onMounted(async () => {
-  if (!code) return;
-  loading.value = true;
-
-  try {
-    const response = await $fetch<Tokens>('/api/token', {
-      query: {
-        code,
-      },
-    });
-
-    tokenStore.accessToken = response.access_token;
-    tokenStore.refreshToken = response.refresh_token;
-  }
-  finally {
-    loading.value = false;
-    await navigateTo('/');
-  }
-});
+}, {
+  immediate: true,
+})
 </script>
 
 <template>
-  <div class="flex flex-col w-full gap-4">
-    <div class="flex justify-center gap-4">
-      <TheLoginButton
-        v-if="!tokenStore.accessToken"
-        :loading="loading"
-      />
-
-      <div class="relative items-center w-full">
-        <Input
-          id="search"
-          v-model="query"
-          type="text"
-          placeholder="Search..."
-          class="pl-10"
-          :disabled="!tokenStore.accessToken"
-        />
-        <span class="absolute inset-y-0 flex items-center justify-center px-2 start-0">
-          <ReloadIcon
-            v-if="status === 'pending'"
-            class="p-[1px] text-muted-foreground size-5 animate-spin mt-[0.5px]"
-          />
-          <MagnifyingGlassIcon
-            v-else
-            class="size-6 text-muted-foreground"
-          />
-        </span>
-      </div>
-    </div>
-
-    <div v-if="data">
-      <ol class="divide-y">
-        <li
-          v-for="item in data.playlists.items"
-          :key="item.id"
-          class="rounded hover:bg-neutral-200"
+  <UIcon
+    v-if="isLoading"
+    name="i-heroicons-arrow-path"
+    class="animate-spin size-10 mx-auto mt-4"
+  />
+  <ol
+    v-else-if="data"
+    class="space-y-2"
+  >
+    <li
+      v-for="item in data?.playlists.items"
+      :key="item.id"
+    >
+      <NuxtLink
+        class="flex items-center gap-2"
+        :to="{ name: 'playlist-id', params: { id: item.id } }"
+      >
+        <img
+          :src="item.images?.at(0)?.url"
+          class="size-20 rounded"
         >
-          <NuxtLink
-            :to="{ name: 'playlist-id', params: { id: item.id } }"
-            class="flex items-center w-full gap-2 p-2 text-left"
-          >
-            <img
-              :src="item.images?.at(0)?.url"
-              class="object-cover rounded size-20"
-              :style="{ viewTransitionName: `cover-${item.id}` }"
-            >
 
-            <div>
-              <p
-                class="w-fit"
-                :style="{ viewTransitionName: `title-${removeSpecialCharacters(item.name)}-${item.id}` }"
-              >
-                {{ item.name }}
-              </p>
-              <p
-                class="text-sm opacity-50 w-fit"
-                :style="{ viewTransitionName: `by-${removeSpecialCharacters(item.owner.display_name)}-${item.id}` }"
-              >
-                By {{ item.owner.display_name }}
-              </p>
-            </div>
-          </NuxtLink>
-        </li>
-      </ol>
-    </div>
-  </div>
+        <div>
+          <p>{{ item.name }}</p>
+          <p class="text-sm">
+            {{ item.owner.display_name }}
+          </p>
+        </div>
+      </NuxtLink>
+    </li>
+  </ol>
 </template>

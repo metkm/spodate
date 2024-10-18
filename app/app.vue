@@ -32,4 +32,8 @@ const tokenStore = useTokenStore()
 @theme {
   --font-family-sans: 'Inter', sans-serif;
 }
+
+html {
+  scrollbar-gutter: stable;
+}
 </style>

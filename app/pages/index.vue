@@ -2,6 +2,8 @@
 import { useRouteQuery } from '@vueuse/router'
 import type { SearchResponse } from '~/models/search'
 
+const route = useRoute()
+
 const query = useRouteQuery('q', '')
 const queryDebounced = refDebounced(query, 500)
 
@@ -42,7 +44,7 @@ watch(queryDebounced, () => {
     >
       <NuxtLink
         class="flex items-center gap-2"
-        :to="{ name: 'playlist-id', params: { id: item.id } }"
+        :to="{ name: 'playlist-id', params: { id: item.id }, query: route.query }"
       >
         <img
           :src="item.images?.at(0)?.url"

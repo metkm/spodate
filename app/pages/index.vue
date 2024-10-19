@@ -53,7 +53,7 @@ useInfiniteScroll(document, async () => {
 </script>
 
 <template>
-  <div>
+  <div class="flex flex-col grow">
     <ol
       v-if="data"
       ref="container"
@@ -87,5 +87,11 @@ useInfiniteScroll(document, async () => {
       name="i-heroicons-arrow-path"
       class="animate-spin size-10 mx-auto mt-4"
     />
+    <p
+      v-else-if="!queryDebounced"
+      class="self-center"
+    >
+      Search Something
+    </p>
   </div>
 </template>

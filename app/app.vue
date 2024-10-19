@@ -6,7 +6,7 @@ const tokenStore = useTokenStore()
 </script>
 
 <template>
-  <main class="flex flex-col gap-4 max-w-4xl p-4 mx-auto text-sm">
+  <main class="flex flex-col gap-4 min-h-screen max-w-4xl p-4 mx-auto text-sm">
     <NuxtLoadingIndicator />
 
     <div class="flex gap-4 w-full">

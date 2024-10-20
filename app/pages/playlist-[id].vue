@@ -48,7 +48,7 @@ const {
 useInfiniteScroll(
   document,
   () => {
-    limit.value = tracks.value?.limit || 20
+    limit.value = data.value?.tracks?.limit || tracks.value?.limit || 20
     offset.value += limit.value
 
     execute()

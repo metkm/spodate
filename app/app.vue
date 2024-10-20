@@ -4,6 +4,8 @@ import { useRouteQuery } from '@vueuse/router'
 const query = useRouteQuery('q', '')
 const tokenStore = useTokenStore()
 
+const background = useState('background')
+
 const handleClick = () => {
   navigateTo({
     name: 'index',
@@ -17,7 +19,7 @@ const handleClick = () => {
 <template>
   <main class="flex flex-col gap-4 min-h-screen max-w-4xl p-4 mx-auto text-sm">
     <NuxtLoadingIndicator />
-    <ClientOnly>
+    <ClientOnly v-if="background">
       <TheLight />
     </ClientOnly>
 

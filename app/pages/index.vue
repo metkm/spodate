@@ -55,6 +55,7 @@ useInfiniteScroll(
   {
     throttle: 1000,
     interval: 1000,
+    distance: 20,
     canLoadMore: () =>
       !!data.value?.playlists.next
       && router.currentRoute.value.name === 'index'

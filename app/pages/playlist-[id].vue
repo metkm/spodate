@@ -56,6 +56,7 @@ useInfiniteScroll(
   {
     throttle: 1000,
     interval: 1000,
+    distance: 20,
     canLoadMore: () =>
       status.value !== 'pending' && (!!tracks.value?.next || !!data.value?.tracks?.next)
     ,
@@ -67,16 +68,16 @@ useInfiniteScroll(
   <div class="flex flex-col gap-4">
     <div
       v-if="data"
-      class="flex gap-4"
+      class="flex flex-wrap gap-4"
     >
       <img
         :src="data.images?.at(0)?.url"
-        class="size-44 lg:size-80 transition-all rounded"
+        class="w-full sm:size-44 lg:size-80 transition-all rounded"
       >
 
       <div class="flex flex-col justify-between py-2">
         <div>
-          <p class="text-xl">
+          <p class="lg:text-xl">
             {{ data.name }}
           </p>
 

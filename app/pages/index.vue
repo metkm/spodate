@@ -76,7 +76,7 @@ useInfiniteScroll(
         :key="item.id"
       >
         <NuxtLink
-          class="flex items-center gap-2"
+          class="flex items-center gap-2 hover:bg-[var(--ui-color-neutral-100)]/10 rounded"
           :to="{ name: 'playlist-id', params: { id: item.id }, query: route.query }"
         >
           <img

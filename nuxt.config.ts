@@ -1,15 +1,17 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2024-04-03',
-  devtools: { enabled: true },
   modules: [
-    '@nuxtjs/tailwindcss',
     '@nuxt/eslint',
-    'shadcn-nuxt',
+    '@vueuse/nuxt',
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
     'nuxt-typed-router',
+    '@nuxt/ui',
   ],
+  devtools: { enabled: true },
+  app: {
+    pageTransition: { name: 'page', mode: 'out-in' },
+  },
   runtimeConfig: {
     SPOTIFY_CLIENT_SECRET: '',
     public: {
@@ -18,31 +20,17 @@ export default defineNuxtConfig({
       SPOTIFY_BASE_URI: '',
     },
   },
-  eslint: {
-    config: {
-      stylistic: {
-        semi: true,
-      },
-    },
-  },
-  experimental: {
-    viewTransition: true,
-  },
-  tailwindcss: {
-    cssPath: '~/assets/css/tailwind.css',
-  },
   future: {
     compatibilityVersion: 4,
   },
-  shadcn: {
-    /**
-     * Prefix for all the imported component
-     */
-    prefix: '',
-    /**
-     * Directory that the component lives in.
-     * @default "./components/ui"
-     */
-    componentDir: './app/components/ui',
+  experimental: {
+    viewTransition: true,
+    typedPages: true,
   },
-});
+  compatibilityDate: '2024-04-03',
+  eslint: {
+    config: {
+      stylistic: true,
+    },
+  },
+})

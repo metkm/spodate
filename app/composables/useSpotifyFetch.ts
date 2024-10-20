@@ -1,13 +1,13 @@
-import type { UseFetchOptions } from 'nuxt/app';
+import type { UseFetchOptions } from 'nuxt/app'
 
 export const useSpotifyFetch = <T>(
   url: string | (() => string),
   options?: UseFetchOptions<T, T>,
 ) => {
-  const config = useRuntimeConfig();
-  const tokenStore = useTokenStore();
+  const config = useRuntimeConfig()
+  const tokenStore = useTokenStore()
 
-  const authorization = computed(() => `Bearer ${tokenStore.accessToken}`);
+  const authorization = computed(() => `Bearer ${tokenStore.accessToken}`)
 
   return useFetch(url, {
     ...options,
@@ -16,7 +16,7 @@ export const useSpotifyFetch = <T>(
       Authorization: authorization,
     },
     onResponseError: () => {
-      tokenStore.clear();
+      tokenStore.clear()
     },
-  });
-};
+  })
+}

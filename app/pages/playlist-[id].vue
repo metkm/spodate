@@ -1,200 +1,141 @@
 <script setup lang="ts">
-import {
-  formatTimeAgo,
-  createReusableTemplate,
-  useImage,
-  useInfiniteScroll,
-} from '@vueuse/core';
-import { ArrowLeftIcon, ReloadIcon } from '@radix-icons/vue';
-import type { UseFetchOptions } from 'nuxt/app';
-import type { Playlists } from '~/models/playlist';
-import type { Pagination } from '~/models/pagination';
-import type { TrackItem } from '~/models/track';
-import type { SearchResponse } from '~/models/search';
+import type { UseFetchOptions } from 'nuxt/app'
+import type { Pagination } from '~/models/pagination'
+import type { PlaylistDetail } from '~/models/playlist'
+import type { SearchResponse } from '~/models/search'
+import type { TrackItem } from '~/models/track'
 
-const router = useRouter();
-const route = useRoute('playlist-id');
-const id = route.params.id;
+const router = useRouter()
+const route = useRoute('playlist-id')
+const id = route.params.id
 
-const config = useRuntimeConfig();
-const tokenStore = useTokenStore();
-const { data: cachePlaylists } = useNuxtData<SearchResponse>('playlists');
+const items = useState<TrackItem[]>(() => [])
+const background = useState('background', () => '')
 
-const { data, error, status } = await useSpotifyFetch<Playlists>(
-  `/playlists/${id}`,
-  {
-    lazy: true,
-    default: () => {
-      const found = cachePlaylists.value?.playlists.items.find(
-        item => item.id === id,
-      );
+const offset = ref(0)
+const limit = ref(20)
 
-      if (!found) return;
+const { data: cache } = useNuxtData<SearchResponse>('playlists')
+const { data } = await useSpotifyFetch<PlaylistDetail>(`/playlists/${id}`, {
+  lazy: true,
+  default: () => {
+    return cache.value?.playlists.items.find(item => item.id === id)
+  },
+  onResponse: (response) => {
+    const data = response.response._data as PlaylistDetail
+    items.value.push(...(data.tracks?.items || []))
+    background.value = data.images?.at(0)?.url || ''
+  },
+} as UseFetchOptions<PlaylistDetail>)
 
-      return {
-        ...found,
-        tracks: undefined,
-        followers: {
-          href: null,
-          total: 0,
-        },
-      };
-    },
-  } as UseFetchOptions<Playlists>,
-);
-const { isReady } = useImage({ src: data.value?.images?.at(0)?.url || '' });
+const {
+  data: tracks,
+  execute,
+  status,
+} = await useSpotifyFetch<Pagination<TrackItem>>(`/playlists/${id}/tracks`, {
+  query: {
+    offset,
+    limit,
+  },
+  onResponse: (response) => {
+    const data = response.response._data as Pagination<TrackItem>
+    items.value.push(...data.items)
+  },
+  immediate: false,
+  watch: false,
+})
 
-const LIMIT = 20;
-let offset = data.value?.tracks?.items?.length || LIMIT;
-
-const { isLoading } = useInfiniteScroll(
+useInfiniteScroll(
   document,
-  async () => {
-    const response = await $fetch<Pagination<TrackItem>>(
-      `${config.public.SPOTIFY_BASE_URI}/playlists/${id}/tracks`,
-      {
-        query: {
-          offset,
-          limit: LIMIT,
-        },
-        headers: {
-          Authorization: `Bearer ${tokenStore.accessToken}`,
-        },
-      },
-    );
+  () => {
+    limit.value = data.value?.tracks?.limit || tracks.value?.limit || 20
+    offset.value += limit.value
 
-    data.value?.tracks?.items.push(...response.items);
-    offset += 20;
+    execute()
   },
   {
-    canLoadMore: () => {
-      return data.value?.tracks ? offset < data.value?.tracks?.total : false;
-    },
+    throttle: 1000,
+    interval: 1000,
+    distance: 20,
+    canLoadMore: () =>
+      status.value !== 'pending' && (!!tracks.value?.next || !!data.value?.tracks?.next)
+    ,
   },
-);
-
-const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
+)
 </script>
 
 <template>
   <div class="flex flex-col gap-4">
-    <Button
-      class="w-fit"
-      @click="router.back()"
+    <div
+      v-if="data"
+      class="flex flex-col sm:flex-row gap-4"
     >
-      <ArrowLeftIcon class="mr-2 size-4" />
-      Back
-    </Button>
+      <img
+        :src="data.images?.at(0)?.url"
+        class="w-full sm:size-44 lg:size-80 transition-all rounded"
+      >
 
-    <template v-if="data">
-      <div class="z-50 flex flex-wrap gap-2">
-        <img
-          :src="data?.images?.at(0)?.url"
-          class="object-cover transition-all rounded shadow size-64"
-          :style="{ viewTransitionName: `cover-${id}` }"
-        >
-
-        <div class="flex flex-col p-2">
-          <p
-            class="text-xl font-semibold w-fit"
-            :style="{
-              viewTransitionName: `title-${removeSpecialCharacters(data?.name || '')}-${data?.id}`,
-            }"
-          >
-            {{ data?.name }}
+      <div class="flex flex-col justify-between py-2">
+        <div>
+          <p class="lg:text-xl">
+            {{ data.name }}
           </p>
 
-          <ul
-            v-if="status !== 'pending'"
-            class="flex gap-8 pl-5 list-disc opacity-50"
-          >
-            <li>{{ data?.followers.total }} saves</li>
-            <li>{{ data?.tracks?.total }} songs</li>
-          </ul>
-          <div
-            v-else
-            class="h-4 mt-2 rounded-full bg-neutral-200 animate-pulse w-44"
-          />
-
-          <a
-            :href="data?.owner.uri"
-            class="mt-auto opacity-50 w-fit"
-            :style="{
-              viewTransitionName: `by-${removeSpecialCharacters(data?.owner.display_name || '')}-${data?.id}`,
-            }"
-          >
-            by {{ data?.owner.display_name }}
-          </a>
-        </div>
-      </div>
-
-      <ReloadIcon
-        v-if="status === 'pending'"
-        class="size-7 text-muted-foreground animate-spin"
-      />
-      <ol v-else>
-        <li
-          v-for="(item, index) in data.tracks?.items"
-          :key="item.track?.id"
-          class="flex items-center gap-4 p-2 hover:bg-neutral-200/20"
-        >
-          <p class="w-8 text-right shrink-0">
-            #{{ index + 1 }}
-          </p>
-
-          <img
-            :src="item.track?.album?.images.at(0)?.url"
-            class="object-cover rounded size-20"
-          >
-
-          <div class="w-full overflow-x-hidden">
-            <p>
-              {{ item.track?.name }}
+          <div class="text-[var(--ui-text-dimmed)]">
+            <p v-if="data.tracks?.total">
+              {{ data.tracks?.total }} songs
             </p>
-
-            <p class="text-sm opacity-50">
-              {{ formatTimeAgo(new Date(item.added_at)) }} - {{ item.added_at }}
+            <p v-if="data.followers?.total">
+              {{ data.followers?.total }} saves
             </p>
           </div>
-        </li>
-      </ol>
+        </div>
 
-      <p v-if="isLoading">
-        Loading...
-      </p>
-    </template>
-    <p v-else>
-      Something happened while loading the playlist {{ error }}
-    </p>
-
-    <DefineTemplate>
-      <img
-        :src="data?.images?.at(0)?.url"
-        class="absolute object-cover w-1/2 rounded-full aspect-square animate-spin blur-[120px] duration-15000"
-      >
-    </DefineTemplate>
-
-    <div
-      v-if="isReady"
-      class="absolute inset-0 max-w-4xl mx-auto pointer-events-none animation-appear -z-10"
-    >
-      <ReuseTemplate class="direction-reverse" />
-      <ReuseTemplate class="right-0 w-3/5" />
+        <p><span class="text-[var(--ui-text-dimmed)]">Playlist by </span>{{ data.owner.display_name }}</p>
+      </div>
     </div>
+
+    <UButton
+      block
+      class="w-24"
+      leading-icon="i-heroicons-arrow-left-circle"
+      @click="router.back()"
+    >
+      Back
+    </UButton>
+
+    <ol
+      v-if="items"
+      class="flex flex-col gap-2"
+    >
+      <li
+        v-for="(item, index) in items"
+        :key="item.track.id"
+        class="flex items-center gap-2 px-2 hover:bg-[var(--ui-color-neutral-100)]/10 rounded"
+      >
+        <p class="w-9 shrink-0 text-center">
+          {{ index + 1 }}
+        </p>
+
+        <img
+          :src="item.track.album.images.at(1)?.url"
+          class="size-20 lg:size-28 rounded"
+        >
+
+        <div class="py-2">
+          <p class="line-clamp-2 w-full">
+            {{ item.track.name }}
+          </p>
+
+          <ClientOnly>
+            <p class="text-[var(--ui-text-dimmed)]">
+              Added at {{ new Date(item.added_at).toLocaleString() }}
+            </p>
+          </ClientOnly>
+        </div>
+      </li>
+
+      <TheLoadingSpinner v-if="status === 'pending'" />
+    </ol>
   </div>
 </template>
-
-<style>
-.animation-appear {
-  animation: appear 2.5s cubic-bezier(0.4, 0, 0.6, 1);
-}
-
-@keyframes appear {
-  0% {
-    opacity: 0%;
-  }
-  100% {
-    opacity: 100%;
-  }
-}
-</style>

@@ -8,6 +8,9 @@ const tokenStore = useTokenStore()
 <template>
   <main class="flex flex-col gap-4 min-h-screen max-w-4xl p-4 mx-auto text-sm">
     <NuxtLoadingIndicator />
+    <ClientOnly>
+      <TheLight />
+    </ClientOnly>
 
     <div class="flex gap-4 w-full">
       <TheLogin v-if="!tokenStore.accessToken" />

@@ -10,6 +10,8 @@ const route = useRoute('playlist-id')
 const id = route.params.id
 
 const items = useState<TrackItem[]>(() => [])
+const background = useState('background', () => '')
+
 const offset = ref(0)
 const limit = ref(20)
 
@@ -22,6 +24,7 @@ const { data } = await useSpotifyFetch<PlaylistDetail>(`/playlists/${id}`, {
   onResponse: (response) => {
     const data = response.response._data as PlaylistDetail
     items.value.push(...(data.tracks?.items || []))
+    background.value = data.images?.at(0)?.url || ''
   },
 } as UseFetchOptions<PlaylistDetail>)
 
@@ -58,6 +61,14 @@ useInfiniteScroll(
     ,
   },
 )
+
+const handleOver = (hoveredItem: TrackItem) => {
+  background.value = hoveredItem.track.album.images.at(0)?.url || ''
+}
+
+const handleOverLeave = () => {
+  background.value = data.value?.images?.at(0)?.url || ''
+}
 </script>
 
 <template>
@@ -107,14 +118,16 @@ useInfiniteScroll(
       <li
         v-for="item in items"
         :key="item.track.id"
-        class="flex items-start gap-2"
+        class="flex items-start gap-2 hover:bg-[var(--ui-color-neutral-100)]/10 rounded"
+        @mouseover="handleOver(item)"
+        @mouseleave="handleOverLeave"
       >
         <img
           :src="item.track.album.images.at(1)?.url"
           class="size-20 lg:size-28 rounded"
         >
 
-        <p class="line-clamp-2 w-full">
+        <p class="line-clamp-2 w-full py-2">
           {{ item.track.name }}
         </p>
       </li>

@@ -132,9 +132,11 @@ const handleLeave = () => {
             {{ item.track.name }}
           </p>
 
-          <p class="text-[var(--ui-text-dimmed)]">
-            Added at {{ new Date(item.added_at).toLocaleString() }}
-          </p>
+          <ClientOnly>
+            <p class="text-[var(--ui-text-dimmed)]">
+              Added at {{ new Date(item.added_at).toLocaleString() }}
+            </p>
+          </ClientOnly>
         </div>
       </li>
 

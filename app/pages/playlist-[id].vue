@@ -61,14 +61,6 @@ useInfiniteScroll(
     ,
   },
 )
-
-const handleEnter = (hoveredItem: TrackItem) => {
-  background.value = hoveredItem.track.album.images.at(0)?.url || ''
-}
-
-const handleLeave = () => {
-  background.value = data.value?.images?.at(0)?.url || ''
-}
 </script>
 
 <template>
@@ -119,8 +111,6 @@ const handleLeave = () => {
         v-for="item in items"
         :key="item.track.id"
         class="flex items-start gap-2 hover:bg-[var(--ui-color-neutral-100)]/10 rounded"
-        @mouseenter="handleEnter(item)"
-        @mouseleave="handleLeave"
       >
         <img
           :src="item.track.album.images.at(1)?.url"

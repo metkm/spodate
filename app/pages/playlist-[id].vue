@@ -127,9 +127,15 @@ const handleLeave = () => {
           class="size-20 lg:size-28 rounded"
         >
 
-        <p class="line-clamp-2 w-full py-2">
-          {{ item.track.name }}
-        </p>
+        <div class="py-2">
+          <p class="line-clamp-2 w-full">
+            {{ item.track.name }}
+          </p>
+
+          <p class="text-[var(--ui-text-dimmed)]">
+            Added at {{ new Date(item.added_at).toLocaleString() }}
+          </p>
+        </div>
       </li>
     </ol>
   </div>

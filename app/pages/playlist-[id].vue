@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { UseFetchOptions } from 'nuxt/app'
+import type { Pagination } from '~/models/pagination'
 import type { PlaylistDetail } from '~/models/playlist'
 import type { SearchResponse } from '~/models/search'
 import type { TrackItem } from '~/models/track'
@@ -9,6 +10,8 @@ const route = useRoute('playlist-id')
 const id = route.params.id
 
 const items = useState<TrackItem[]>(() => [])
+const offset = ref(0)
+const limit = ref(20)
 
 const { data: cache } = useNuxtData<SearchResponse>('playlists')
 const { data } = await useSpotifyFetch<PlaylistDetail>(`/playlists/${id}`, {
@@ -21,6 +24,40 @@ const { data } = await useSpotifyFetch<PlaylistDetail>(`/playlists/${id}`, {
     items.value.push(...(data.tracks?.items || []))
   },
 } as UseFetchOptions<PlaylistDetail>)
+
+const {
+  data: tracks,
+  execute,
+  status,
+} = await useSpotifyFetch<Pagination<TrackItem>>(`/playlists/${id}/tracks`, {
+  query: {
+    offset,
+    limit,
+  },
+  onResponse: (response) => {
+    const data = response.response._data as Pagination<TrackItem>
+    items.value.push(...data.items)
+  },
+  immediate: false,
+  watch: false,
+})
+
+useInfiniteScroll(
+  document,
+  () => {
+    limit.value = tracks.value?.limit || 20
+    offset.value += limit.value
+
+    execute()
+  },
+  {
+    throttle: 1000,
+    interval: 1000,
+    canLoadMore: () =>
+      status.value !== 'pending' && !!tracks.value?.next && !!data.value?.tracks?.next
+    ,
+  },
+)
 </script>
 
 <template>
@@ -35,8 +72,22 @@ const { data } = await useSpotifyFetch<PlaylistDetail>(`/playlists/${id}`, {
       >
 
       <div class="flex flex-col justify-between py-2">
-        <p>{{ data.name }}</p>
-        <p>{{ data.owner.display_name }}</p>
+        <div>
+          <p class="text-xl">
+            {{ data.name }}
+          </p>
+
+          <div class="text-[var(--ui-text-dimmed)]">
+            <p v-if="data.tracks?.total">
+              {{ data.tracks?.total }} songs
+            </p>
+            <p v-if="data.followers?.total">
+              {{ data.followers?.total }} saves
+            </p>
+          </div>
+        </div>
+
+        <p><span class="text-[var(--ui-text-dimmed)]">Playlist by </span>{{ data.owner.display_name }}</p>
       </div>
     </div>
 

@@ -5,7 +5,7 @@ import type { SearchResponse } from '~/models/search'
 
 const route = useRoute()
 const query = useRouteQuery('q', '')
-const container = useTemplateRef('container')
+const router = useRouter()
 
 const queryDebounced = refDebounced(query, 500)
 const items = ref<Playlist[]>([])
@@ -29,27 +29,39 @@ const { data, status, execute } = await useSpotifyFetch<SearchResponse>('/search
 
 const isLoading = computed(() => status.value === 'pending')
 
-watch(queryDebounced, () => {
-  if (queryDebounced.value) {
+watch(
+  queryDebounced,
+  () => {
+    if (queryDebounced.value) {
+      items.value = []
+      execute()
+    }
+  },
+  {
+    immediate: true,
+  },
+)
+
+useInfiniteScroll(
+  document,
+  async () => {
+    if (!data.value) return
+
+    limit.value = data.value.playlists.limit
+    offset.value += limit.value
+
     execute()
-  }
-}, {
-  immediate: true,
-})
-
-useInfiniteScroll(document, async () => {
-  if (!data.value) return
-
-  limit.value = data.value.playlists.limit
-  offset.value += limit.value
-
-  execute()
-}, {
-  distance: 10,
-  throttle: 1000,
-  interval: 1000,
-  canLoadMore: () => !!data.value?.playlists.next,
-})
+  },
+  {
+    throttle: 1000,
+    interval: 1000,
+    canLoadMore: () =>
+      !!data.value?.playlists.next
+      && router.currentRoute.value.name === 'index'
+      && status.value !== 'pending'
+    ,
+  },
+)
 </script>
 
 <template>

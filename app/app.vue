@@ -3,6 +3,15 @@ import { useRouteQuery } from '@vueuse/router'
 
 const query = useRouteQuery('q', '')
 const tokenStore = useTokenStore()
+
+const handleClick = () => {
+  navigateTo({
+    name: 'index',
+    query: {
+      query: query.value,
+    },
+  })
+}
 </script>
 
 <template>
@@ -21,6 +30,7 @@ const tokenStore = useTokenStore()
         size="lg"
         class="grow"
         :disabled="!tokenStore.accessToken"
+        @click="handleClick"
       />
     </div>
 

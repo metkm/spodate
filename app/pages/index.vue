@@ -31,11 +31,11 @@ const isLoading = computed(() => status.value === 'pending')
 
 watch(
   queryDebounced,
-  () => {
-    if (queryDebounced.value) {
-      items.value = []
-      execute()
-    }
+  async () => {
+    if (!queryDebounced.value) return
+
+    items.value = []
+    execute()
   },
   {
     immediate: true,

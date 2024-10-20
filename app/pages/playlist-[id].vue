@@ -57,7 +57,7 @@ useInfiniteScroll(
     throttle: 1000,
     interval: 1000,
     canLoadMore: () =>
-      status.value !== 'pending' && !!tracks.value?.next && !!data.value?.tracks?.next
+      status.value !== 'pending' && (!!tracks.value?.next || !!data.value?.tracks?.next)
     ,
   },
 )
@@ -137,6 +137,8 @@ const handleLeave = () => {
           </p>
         </div>
       </li>
+
+      <TheLoadingSpinner v-if="status === 'pending'" />
     </ol>
   </div>
 </template>

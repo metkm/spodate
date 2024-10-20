@@ -68,7 +68,7 @@ useInfiniteScroll(
   <div class="flex flex-col gap-4">
     <div
       v-if="data"
-      class="flex flex-wrap gap-4"
+      class="flex flex-col sm:flex-row gap-4"
     >
       <img
         :src="data.images?.at(0)?.url"
@@ -109,10 +109,14 @@ useInfiniteScroll(
       class="flex flex-col gap-2"
     >
       <li
-        v-for="item in items"
+        v-for="(item, index) in items"
         :key="item.track.id"
-        class="flex items-start gap-2 hover:bg-[var(--ui-color-neutral-100)]/10 rounded"
+        class="flex items-center gap-2 px-2 hover:bg-[var(--ui-color-neutral-100)]/10 rounded"
       >
+        <p class="w-9 shrink-0 text-center">
+          {{ index + 1 }}
+        </p>
+
         <img
           :src="item.track.album.images.at(1)?.url"
           class="size-20 lg:size-28 rounded"

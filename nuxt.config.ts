@@ -12,6 +12,7 @@ export default defineNuxtConfig({
   app: {
     pageTransition: { name: 'page', mode: 'out-in' },
   },
+  css: ['~/assets/main.css'],
   runtimeConfig: {
     SPOTIFY_CLIENT_SECRET: '',
     public: {
@@ -28,6 +29,11 @@ export default defineNuxtConfig({
     typedPages: true,
   },
   compatibilityDate: '2024-04-03',
+  postcss: {
+    plugins: {
+      '@tailwindcss/postcss': {},
+    },
+  },
   eslint: {
     config: {
       stylistic: true,

@@ -39,3 +39,26 @@ const handleClick = () => {
     <NuxtPage keepalive />
   </main>
 </template>
+
+<style>
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+@theme {
+  --font-family-sans: 'Inter', sans-serif;
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
+.page-enter-active,
+.page-leave-active {
+  transition: all 150ms;
+}
+.page-enter-from,
+.page-leave-to {
+  transform: translateY(20px);
+  opacity: 0;
+}
+</style>

@@ -5,14 +5,12 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
-    'nuxt-typed-router',
     '@nuxt/ui',
   ],
   devtools: { enabled: true },
   app: {
     pageTransition: { name: 'page', mode: 'out-in' },
   },
-  css: ['~/assets/main.css'],
   runtimeConfig: {
     SPOTIFY_CLIENT_SECRET: '',
     public: {
@@ -29,11 +27,6 @@ export default defineNuxtConfig({
     typedPages: true,
   },
   compatibilityDate: '2024-04-03',
-  postcss: {
-    plugins: {
-      '@tailwindcss/postcss': {},
-    },
-  },
   eslint: {
     config: {
       stylistic: true,

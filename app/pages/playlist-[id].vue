@@ -56,7 +56,7 @@ useInfiniteScroll(
   {
     throttle: 1000,
     interval: 1000,
-    distance: 20,
+    distance: 50,
     canLoadMore: () =>
       status.value !== 'pending' && (!!tracks.value?.next || !!data.value?.tracks?.next)
     ,

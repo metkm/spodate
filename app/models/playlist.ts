@@ -33,6 +33,7 @@ export interface Owner {
   type: string
   uri: string
   display_name: string
+  external_urls: ExternalUrls
 }
 
 export interface Followers {

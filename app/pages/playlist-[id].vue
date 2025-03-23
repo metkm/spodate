@@ -9,7 +9,7 @@ const router = useRouter()
 const route = useRoute('playlist-id')
 const id = route.params.id
 
-const items = useState<TrackItem[]>(() => [])
+const items = useState<TrackItem[]>(`playlist-items-${id}`, () => [])
 const background = useState('background', () => '')
 
 const offset = ref(0)
@@ -77,22 +77,33 @@ useInfiniteScroll(
       >
 
       <div class="flex flex-col justify-between py-2">
-        <div>
+        <div class="flex flex-col gap-2 [&_span]:text-(--ui-text-dimmed)">
           <p class="lg:text-xl">
             {{ data.name }}
           </p>
 
-          <div class="text-[var(--ui-text-dimmed)]">
-            <p v-if="data.tracks?.total">
-              {{ data.tracks?.total }} songs
-            </p>
-            <p v-if="data.followers?.total">
-              {{ data.followers?.total }} saves
-            </p>
-          </div>
+          <p
+            v-if="data.tracks?.total"
+            class="bg-(--ui-bg-elevated) rounded-full w-fit px-4 py-1"
+          >
+            {{ data.tracks?.total }} <span>songs</span>
+          </p>
+          <p
+            v-if="data.followers?.total"
+            class="bg-(--ui-bg-elevated) rounded-full w-fit px-4 py-1"
+          >
+            {{ data.followers?.total }} <span>saves</span>
+          </p>
         </div>
 
-        <p><span class="text-[var(--ui-text-dimmed)]">Playlist by </span>{{ data.owner.display_name }}</p>
+        <a
+          :href="data.external_urls.spotify"
+          target="_blank"
+          class="bg-(--ui-bg-elevated) rounded-full w-fit px-4 py-1"
+        >
+          <span class="text-(--ui-text-dimmed)">Playlist by</span>
+          {{ data.owner.display_name }}
+        </a>
       </div>
     </div>
 
@@ -105,14 +116,11 @@ useInfiniteScroll(
       Back
     </UButton>
 
-    <ol
-      v-if="items"
-      class="flex flex-col gap-2"
-    >
+    <ol v-if="items">
       <li
         v-for="(item, index) in items"
         :key="item.track?.id"
-        class="flex items-center gap-2 px-2 hover:bg-[var(--ui-color-neutral-100)]/10 rounded"
+        class="flex items-center gap-2 px-2 p-2 hover:bg-[var(--ui-color-neutral-100)]/10 rounded"
       >
         <p class="w-9 shrink-0 text-center">
           {{ index + 1 }}

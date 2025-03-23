@@ -20,9 +20,7 @@ const handleClick = () => {
 <template>
   <main class="flex flex-col gap-4 min-h-screen max-w-4xl p-4 mx-auto text-sm">
     <NuxtLoadingIndicator />
-    <ClientOnly v-if="background">
-      <TheLight />
-    </ClientOnly>
+    <TheLight v-if="background" />
 
     <div class="flex gap-4 w-full">
       <TheLogin v-if="!tokenStore.accessToken" />

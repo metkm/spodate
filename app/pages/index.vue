@@ -5,6 +5,7 @@ import type { SearchResponse } from '~/models/search'
 
 const query = useRouteQuery('q', '')
 const router = useRouter()
+const route = useRoute()
 
 const queryDebounced = refDebounced(query, 500)
 const items = ref<Playlist[]>([])
@@ -32,12 +33,17 @@ const isLoading = computed(() => status.value === 'pending')
 
 watch(
   queryDebounced,
-  async (curr, prev) => {
-    if (curr && !prev) return
-    if (!queryDebounced.value) return
+  async () => {
+    if (!queryDebounced.value) {
+      items.value = []
 
-    items.value = []
+      return
+    }
+
     execute()
+  },
+  {
+    immediate: true,
   },
 )
 
@@ -76,7 +82,7 @@ useInfiniteScroll(
       >
         <NuxtLink
           class="flex items-center gap-2 hover:bg-[var(--ui-color-neutral-100)]/10 rounded"
-          :to="{ name: 'playlist-id', params: { id: item.id } }"
+          :to="{ name: 'playlist-id', params: { id: item.id }, query: route.query }"
         >
           <img
             :src="item.images?.at(0)?.url"

@@ -19,7 +19,7 @@ const { data: cache } = useNuxtData<SearchResponse>('playlists')
 const { data } = await useSpotifyFetch<PlaylistDetail>(`/playlists/${id}`, {
   lazy: true,
   default: () => {
-    return cache.value?.playlists.items.find(item => item.id === id)
+    return cache.value?.playlists.items.find(item => item?.id === id)
   },
   onResponse: (response) => {
     const data = response.response._data as PlaylistDetail
@@ -39,7 +39,9 @@ const {
   },
   onResponse: (response) => {
     const data = response.response._data as Pagination<TrackItem>
-    items.value.push(...data.items)
+    const trackItems = data.items.filter(item => !!item.track)
+
+    items.value.push(...trackItems)
   },
   immediate: false,
   watch: false,
@@ -58,8 +60,7 @@ useInfiniteScroll(
     interval: 1000,
     distance: 50,
     canLoadMore: () =>
-      status.value !== 'pending' && (!!tracks.value?.next || !!data.value?.tracks?.next)
-    ,
+      status.value !== 'pending' && (!!tracks.value?.next || !!data.value?.tracks?.next),
   },
 )
 </script>
@@ -110,7 +111,7 @@ useInfiniteScroll(
     >
       <li
         v-for="(item, index) in items"
-        :key="item.track.id"
+        :key="item.track?.id"
         class="flex items-center gap-2 px-2 hover:bg-[var(--ui-color-neutral-100)]/10 rounded"
       >
         <p class="w-9 shrink-0 text-center">
@@ -118,13 +119,13 @@ useInfiniteScroll(
         </p>
 
         <img
-          :src="item.track.album.images.at(1)?.url"
+          :src="item.track?.album.images.at(1)?.url"
           class="size-20 lg:size-28 rounded"
         >
 
         <div class="py-2">
           <p class="line-clamp-2 w-full">
-            {{ item.track.name }}
+            {{ item.track?.name }}
           </p>
 
           <ClientOnly>

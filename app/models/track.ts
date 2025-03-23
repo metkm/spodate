@@ -8,7 +8,7 @@ export interface TrackItem {
   added_by: Owner
   is_local: boolean
   primary_color: string | null
-  track: Track
+  track?: Track
   video_thumbnail: {
     url: string | null
   }

@@ -3,7 +3,6 @@ import { useRouteQuery } from '@vueuse/router'
 import type { Playlist } from '~/models/playlist'
 import type { SearchResponse } from '~/models/search'
 
-const route = useRoute()
 const query = useRouteQuery('q', '')
 const router = useRouter()
 
@@ -21,7 +20,9 @@ const { data, status, execute } = await useSpotifyFetch<SearchResponse>('/search
   },
   onResponse: (response) => {
     const data = response.response._data as SearchResponse
-    items.value.push(...data.playlists.items)
+    const results = data.playlists.items.filter(item => !!item)
+
+    items.value.push(...results)
   },
   watch: false,
   immediate: false,
@@ -31,14 +32,12 @@ const isLoading = computed(() => status.value === 'pending')
 
 watch(
   queryDebounced,
-  async () => {
+  async (curr, prev) => {
+    if (curr && !prev) return
     if (!queryDebounced.value) return
 
     items.value = []
     execute()
-  },
-  {
-    immediate: true,
   },
 )
 
@@ -59,8 +58,7 @@ useInfiniteScroll(
     canLoadMore: () =>
       !!data.value?.playlists.next
       && router.currentRoute.value.name === 'index'
-      && status.value !== 'pending'
-    ,
+      && status.value !== 'pending',
   },
 )
 </script>
@@ -78,7 +76,7 @@ useInfiniteScroll(
       >
         <NuxtLink
           class="flex items-center gap-2 hover:bg-[var(--ui-color-neutral-100)]/10 rounded"
-          :to="{ name: 'playlist-id', params: { id: item.id }, query: route.query }"
+          :to="{ name: 'playlist-id', params: { id: item.id } }"
         >
           <img
             :src="item.images?.at(0)?.url"

@@ -7,10 +7,11 @@ const tokenStore = useTokenStore()
 const background = useState('background')
 
 const handleClick = () => {
+  console.log(query.value)
   navigateTo({
     name: 'index',
     query: {
-      query: query.value,
+      q: query.value,
     },
   })
 }

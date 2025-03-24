@@ -34,9 +34,9 @@ const isLoading = computed(() => status.value === 'pending')
 watch(
   queryDebounced,
   async () => {
-    if (!queryDebounced.value) {
-      items.value = []
+    items.value = []
 
+    if (!queryDebounced.value) {
       return
     }
 
@@ -74,7 +74,7 @@ useInfiniteScroll(
     <ol
       v-if="data"
       ref="container"
-      class="flex flex-col gap-2 overflow-y-auto grow"
+      class="flex flex-col gap-2 overflow-y-auto"
     >
       <li
         v-for="item in items"

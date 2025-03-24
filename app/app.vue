@@ -19,7 +19,10 @@ const handleClick = () => {
 <template>
   <main class="flex flex-col gap-4 min-h-screen max-w-4xl p-4 mx-auto text-sm">
     <NuxtLoadingIndicator />
-    <TheLight v-if="background" />
+
+    <ClientOnly>
+      <TheLight v-if="background" />
+    </ClientOnly>
 
     <div class="flex gap-4 w-full">
       <TheLogin v-if="!tokenStore.accessToken" />
@@ -34,7 +37,7 @@ const handleClick = () => {
       />
     </div>
 
-    <NuxtPage keepalive />
+    <NuxtPage />
   </main>
 </template>
 

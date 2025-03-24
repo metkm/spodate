@@ -126,10 +126,15 @@ useInfiniteScroll(
           {{ index + 1 }}
         </p>
 
-        <img
-          :src="item.track?.album.images.at(1)?.url"
-          class="size-20 lg:size-28 rounded"
+        <ExpandableImage
+          v-if="item.track?.album.images.at(1)?.url"
+          :src="item.track?.album.images.at(1)!.url"
         >
+          <img
+            :src="item.track?.album.images.at(1)?.url"
+            class="size-20 lg:size-28 rounded"
+          >
+        </ExpandableImage>
 
         <div class="py-2">
           <p class="line-clamp-2 w-full">

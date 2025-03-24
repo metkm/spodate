@@ -76,7 +76,7 @@ useInfiniteScroll(
         class="w-full sm:size-44 lg:size-80 transition-all rounded"
       >
 
-      <div class="flex flex-col justify-between py-2">
+      <div class="flex flex-col gap-4 justify-between py-2">
         <div class="flex flex-col gap-2 [&_span]:text-(--ui-text-dimmed)">
           <p class="lg:text-xl">
             {{ data.name }}

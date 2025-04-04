@@ -36,7 +36,7 @@ onMounted(() => {
       <TheLight v-if="background" />
     </ClientOnly>
 
-    <NuxtPage :token-fetch-status="tokenFetchStatus" />
+    <NuxtPage />
   </main>
 </template>
 

@@ -15,7 +15,7 @@ const queryDebounced = refDebounced(query, 500)
 
 const items = ref<Playlist[]>([])
 
-const { status, execute } = await useSpotifyFetch<SearchResponse>('/search', {
+const { status, error, execute, clear } = await useSpotifyFetch<SearchResponse>('/search', {
   key: 'playlists',
   query: {
     q: queryDebounced,
@@ -46,6 +46,13 @@ watch(queryDebounced, async () => {
     console.log('error')
     storeToken.clear()
   }
+})
+
+watch(error, () => {
+  if (!error.value) return
+  clear()
+  storeToken.clear()
+  query.value = ''
 })
 </script>
 
@@ -122,10 +129,11 @@ watch(queryDebounced, async () => {
               class="flex items-center gap-2 hover:bg-[var(--ui-color-neutral-100)]/10 rounded"
               :to="{ name: 'playlist-id', params: { id: item.id } }"
             >
-              <img
+              <motion.img
                 :src="item.images?.at(0)?.url"
                 class="size-20 rounded"
-              >
+                :layout-id="`image-${item.id}`"
+              />
 
               <div>
                 <p>{{ item.name }}</p>

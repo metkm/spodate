@@ -71,10 +71,12 @@ useInfiniteScroll(
       v-if="data"
       class="flex flex-col sm:flex-row gap-4"
     >
-      <img
-        :src="data.images?.at(0)?.url"
-        class="w-full sm:size-44 lg:size-80 transition-all rounded"
-      >
+      <Motion :layout-id="`image-${data.id}`">
+        <img
+          :src="data.images?.at(0)?.url"
+          class="w-full sm:size-44 lg:size-80 transition-all rounded"
+        >
+      </Motion>
 
       <div class="flex flex-col gap-4 justify-between py-2">
         <div class="flex flex-col gap-2 [&_span]:text-(--ui-text-dimmed)">

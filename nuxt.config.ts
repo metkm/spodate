@@ -9,9 +9,6 @@ export default defineNuxtConfig({
     'motion-v/nuxt',
   ],
   devtools: { enabled: true },
-  app: {
-    pageTransition: { name: 'page', mode: 'out-in' },
-  },
   runtimeConfig: {
     SPOTIFY_CLIENT_SECRET: '',
     public: {
@@ -24,7 +21,6 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
   experimental: {
-    viewTransition: true,
     typedPages: true,
   },
   compatibilityDate: '2024-04-03',

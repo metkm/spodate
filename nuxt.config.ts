@@ -6,6 +6,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@nuxt/ui',
     'pinia-plugin-persistedstate/nuxt',
+    'motion-v/nuxt',
   ],
   devtools: { enabled: true },
   app: {

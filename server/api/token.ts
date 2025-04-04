@@ -1,16 +1,16 @@
-import type { Tokens } from '~/models/tokens';
+import type { Tokens } from '~/models/tokens'
 
 export default defineEventHandler(async (event) => {
-  const code = getQuery(event).code as string | undefined;
+  const code = getQuery(event).code as string | undefined
 
   if (!code) {
     throw createError({
       message: 'Code is a required parameter',
-    });
+    })
   }
 
-  const config = useRuntimeConfig();
-  const authorization = `Basic ${(Buffer.from(`${config.public.SPOTIFY_CLIENT_ID}:${config.SPOTIFY_CLIENT_SECRET}`)).toString('base64')}`;
+  const config = useRuntimeConfig()
+  const authorization = `Basic ${(Buffer.from(`${config.public.SPOTIFY_CLIENT_ID}:${config.SPOTIFY_CLIENT_SECRET}`)).toString('base64')}`
 
   const response = await $fetch<Tokens>('https://accounts.spotify.com/api/token', {
     method: 'POST',
@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
       'Authorization': authorization,
       'Content-Type': 'application/x-www-form-urlencoded',
     },
-  });
+  })
 
-  return response;
-});
+  return response
+})

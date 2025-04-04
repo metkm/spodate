@@ -66,7 +66,7 @@ useInfiniteScroll(
 </script>
 
 <template>
-  <div class="flex flex-col gap-4">
+  <div class="flex flex-col gap-4 w-full">
     <div
       v-if="data"
       class="flex flex-col sm:flex-row gap-4"

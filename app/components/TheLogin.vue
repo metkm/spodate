@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { motion } from 'motion-v'
+
 defineProps<{
   loading?: boolean
 }>()
@@ -15,11 +17,18 @@ const redirectUri = url.toString()
 </script>
 
 <template>
-  <UButton
-    :to="redirectUri"
-    target="_blank"
-    size="lg"
+  <motion.a
+    :href="redirectUri"
+    class="flex items-center text-(--ui-primary) bg-(--ui-primary)/10 hover:bg-(--ui-primary)/15 rounded-full transition-colors px-8 py-2 font-medium text-sm"
   >
     Login
-  </UButton>
+  </motion.a>
+
+  <!-- <UButton
+    :to="redirectUri"
+    class="px-8"
+    variant="soft"
+  >
+    Login
+  </UButton> -->
 </template>

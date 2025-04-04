@@ -3,5 +3,15 @@ export default defineAppConfig({
     colors: {
       neutral: 'zinc',
     },
+    input: {
+      slots: {
+        base: 'rounded-full',
+      },
+    },
+    button: {
+      slots: {
+        base: 'rounded-full',
+      },
+    },
   },
 })

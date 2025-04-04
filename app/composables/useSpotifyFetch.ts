@@ -15,7 +15,8 @@ export const useSpotifyFetch = <T>(
     headers: {
       Authorization: authorization,
     },
-    onResponseError: () => {
+    onResponseError() {
+      console.log('response error')
       tokenStore.clear()
     },
   })

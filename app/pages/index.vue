@@ -50,7 +50,7 @@ watch(queryDebounced, async () => {
 </script>
 
 <template>
-  <motion.div class="flex flex-col gap-4 justify-center p-4 w-full max-w-2xl mx-auto">
+  <div class="flex flex-col gap-4 justify-center p-4 w-full max-w-2xl mx-auto">
     <LayoutGroup>
       <AnimatePresence>
         <motion.div
@@ -58,33 +58,51 @@ watch(queryDebounced, async () => {
           class="flex items-end gap-2 rounded-lg sticky top-4"
         >
           <LayoutGroup>
-            <div class="grow">
-              <AnimatePresence>
-                <motion.h1
-                  v-if="!queryDebounced"
-                  class="font-medium text-xl text-center mb-2"
-                  :initial="{ opacity: 0 }"
-                  :animate="{ opacity: 1 }"
-                  :exit="{ opacity: 0 }"
+            <AnimatePresence>
+              <motion.div
+                layout
+                class="grow"
+              >
+                <AnimatePresence>
+                  <motion.h1
+                    v-if="!queryDebounced"
+                    class="font-medium text-xl w-fit mx-auto mb-2"
+                    :initial="{ opacity: 0 }"
+                    :animate="{ opacity: 1 }"
+                    :exit="{ opacity: 0 }"
+                    layout="position"
+                  >
+                    Search a playlist
+                  </motion.h1>
+                </AnimatePresence>
+
+                <Motion
+                  as-child
                   layout
                 >
-                  Search a playlist
-                </motion.h1>
-              </AnimatePresence>
+                  <UInput
+                    v-model="query"
+                    icon="i-heroicons-magnifying-glass"
+                    class="w-full"
+                    variant="soft"
+                    size="xl"
+                    placeholder="write here"
+                    :loading="status === 'pending'"
+                    :disabled="!storeToken.accessToken"
+                  />
+                </Motion>
+              </motion.div>
 
-              <VSearch
-                v-model="query"
-                :layout-dependency="storeToken.accessToken"
-                :disabled="!storeToken.accessToken"
-                :is-loading="status === 'pending'"
-              />
-            </div>
-
-            <LayoutGroup>
-              <AnimatePresence mode="popLayout">
-                <TheLogin v-if="!storeToken.accessToken" />
-              </AnimatePresence>
-            </LayoutGroup>
+              <Motion
+                v-if="!storeToken.accessToken"
+                :exit="{ opacity: 0 }"
+                :initial="{ opacity: 0 }"
+                :animate="{ opacity: 1 }"
+                layout
+              >
+                <TheLogin />
+              </Motion>
+            </AnimatePresence>
           </LayoutGroup>
         </motion.div>
 
@@ -120,5 +138,5 @@ watch(queryDebounced, async () => {
         </motion.ul>
       </AnimatePresence>
     </LayoutGroup>
-  </motion.div>
+  </div>
 </template>

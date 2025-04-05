@@ -8,7 +8,7 @@ const background = useState('background')
 
 const code = route.query?.code as string | undefined
 
-const { execute: fetchTokens, status: tokenFetchStatus } = await useFetch<Tokens>('/api/token', {
+const { execute: fetchTokens } = await useFetch<Tokens>('/api/token', {
   query: {
     code,
   },
@@ -45,11 +45,12 @@ onMounted(() => {
 @import "@nuxt/ui";
 
 @theme {
-  --font-family-sans: 'Inter', sans-serif;
+  --font-inter: 'Inter', sans-serif;
 }
 
 html {
   scrollbar-gutter: stable;
+  font-family: var(--font-inter);
 }
 
 .page-enter-active,

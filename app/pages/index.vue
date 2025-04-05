@@ -3,6 +3,7 @@ import { motion } from 'motion-v'
 import type { AsyncDataRequestStatus } from '#app'
 import type { SearchResponse } from '~/models/search'
 import type { Playlist } from '~/models/playlist'
+import { fadeInVariant } from '~/variants'
 
 defineProps<{
   tokenFetchStatus?: AsyncDataRequestStatus
@@ -17,7 +18,7 @@ defineShortcuts({
 const storeToken = useTokenStore()
 const queryElement = useTemplateRef('query-element')
 
-const query = ref('')
+const query = useRouteQuery('q')
 const queryDebounced = refDebounced(query, 500)
 
 const items = ref<Playlist[]>([])
@@ -52,6 +53,8 @@ watch(queryDebounced, async () => {
   catch {
     storeToken.clear()
   }
+}, {
+  immediate: true,
 })
 
 watch(error, () => {
@@ -73,6 +76,7 @@ watch(error, () => {
         <motion.div
           layout
           class="flex flex-col gap-2 rounded-lg sticky top-4"
+          :variants="fadeInVariant"
         >
           <LayoutGroup>
             <AnimatePresence>
@@ -84,9 +88,10 @@ watch(error, () => {
                   <motion.h1
                     v-if="!queryDebounced"
                     class="font-medium text-xl w-fit mx-auto mb-2"
-                    :initial="{ opacity: 0 }"
-                    :animate="{ opacity: 1 }"
-                    :exit="{ opacity: 0 }"
+                    :variants="fadeInVariant"
+                    initial="hidden"
+                    animate="visible"
+                    exit="hidden"
                     layout="position"
                   >
                     Search a playlist
@@ -99,7 +104,7 @@ watch(error, () => {
                 >
                   <UInput
                     ref="query-element"
-                    v-model="query"
+                    v-model="query as string"
                     icon="i-heroicons-magnifying-glass"
                     class="w-full"
                     variant="soft"
@@ -130,9 +135,7 @@ watch(error, () => {
 
               <Motion
                 v-if="!storeToken.accessToken"
-                :exit="{ opacity: 0 }"
-                :initial="{ opacity: 0 }"
-                :animate="{ opacity: 1 }"
+                :variants="fadeInVariant"
                 layout
               >
                 <TheLogin
@@ -193,7 +196,7 @@ watch(error, () => {
               />
 
               <div>
-                <p>{{ item.name }}</p>
+                <motion.p :layout-id="`title-${item.id}`">{{ item.name }}</motion.p>
                 <p class="text-sm">
                   {{ item.owner.display_name }}
                 </p>

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { UseFetchOptions } from 'nuxt/app'
+import { motion } from 'motion-v'
 import type { Pagination } from '~/models/pagination'
 import type { PlaylistDetail } from '~/models/playlist'
 import type { SearchResponse } from '~/models/search'
 import type { TrackItem } from '~/models/track'
+import { fadeInVariant, listVariant } from '~/variants'
 
 const router = useRouter()
 const route = useRoute('playlist-id')
@@ -80,16 +82,22 @@ useInfiniteScroll(
 
       <div class="flex flex-col gap-4 justify-between py-2">
         <div class="flex flex-col gap-2 [&_span]:text-(--ui-text-dimmed)">
-          <p class="lg:text-xl">
+          <motion.p
+            :layout-id="`title-${data.id}`"
+            class="lg:text-xl"
+          >
             {{ data.name }}
-          </p>
+          </motion.p>
 
-          <p
+          <motion.p
             v-if="data.tracks?.total"
             class="bg-(--ui-bg-elevated) rounded-full w-fit px-4 py-1"
+            :variants="fadeInVariant"
+            initial="hidden"
+            animate="visible"
           >
             {{ data.tracks?.total }} <span>songs</span>
-          </p>
+          </motion.p>
           <p
             v-if="data.followers?.total"
             class="bg-(--ui-bg-elevated) rounded-full w-fit px-4 py-1"
@@ -98,28 +106,44 @@ useInfiniteScroll(
           </p>
         </div>
 
-        <a
+        <motion.a
           :href="data.external_urls.spotify"
           target="_blank"
           class="bg-(--ui-bg-elevated) rounded-full w-fit px-4 py-1"
+          :variants="fadeInVariant"
+          initial="hidden"
+          animate="visible"
         >
           <span class="text-(--ui-text-dimmed)">Playlist by</span>
           {{ data.owner.display_name }}
-        </a>
+        </motion.a>
       </div>
     </div>
 
-    <UButton
-      block
-      class="w-24"
-      leading-icon="i-heroicons-arrow-left-circle"
-      @click="router.back()"
+    <Motion
+      :variants="fadeInVariant"
+      initial="hidden"
+      animate="visible"
+      exit="hidden"
     >
-      Back
-    </UButton>
+      <UButton
+        block
+        class="w-24"
+        leading-icon="i-heroicons-arrow-left-circle"
+        @click="router.back()"
+      >
+        Back
+      </UButton>
+    </Motion>
 
-    <ol v-if="items">
-      <li
+    <motion.ol
+      v-if="items"
+      :variants="listVariant"
+      initial="hidden"
+      animate="visible"
+      exit="hidden"
+    >
+      <motion.li
         v-for="(item, index) in items"
         :key="item.track?.id"
         class="flex items-center gap-2 px-2 p-2 hover:bg-[var(--ui-color-neutral-100)]/10 rounded"
@@ -149,9 +173,9 @@ useInfiniteScroll(
             </p>
           </ClientOnly>
         </div>
-      </li>
+      </motion.li>
 
       <TheLoadingSpinner v-if="status === 'pending'" />
-    </ol>
+    </motion.ol>
   </div>
 </template>

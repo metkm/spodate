@@ -29,4 +29,9 @@ export default defineNuxtConfig({
       stylistic: true,
     },
   },
+  fonts: {
+    defaults: {
+      weights: [400, 500],
+    },
+  },
 })

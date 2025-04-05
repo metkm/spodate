@@ -18,7 +18,7 @@ defineShortcuts({
 const storeToken = useTokenStore()
 const queryElement = useTemplateRef('query-element')
 
-const query = useRouteQuery('q')
+const query = useRouteQuery('q') as Ref<string | undefined>
 const queryDebounced = refDebounced(query, 500)
 
 const items = ref<Playlist[]>([])
@@ -104,7 +104,7 @@ watch(error, () => {
                 >
                   <UInput
                     ref="query-element"
-                    v-model="(query as string)"
+                    v-model="query"
                     icon="i-heroicons-magnifying-glass"
                     class="w-full"
                     variant="soft"

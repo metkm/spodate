@@ -104,7 +104,7 @@ watch(error, () => {
                 >
                   <UInput
                     ref="query-element"
-                    v-model="query as string"
+                    v-model="(query as string)"
                     icon="i-heroicons-magnifying-glass"
                     class="w-full"
                     variant="soft"

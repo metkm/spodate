@@ -8,7 +8,14 @@ defineProps<{
   tokenFetchStatus?: AsyncDataRequestStatus
 }>()
 
+defineShortcuts({
+  '/': () => {
+    queryElement.value?.inputRef?.focus()
+  },
+})
+
 const storeToken = useTokenStore()
+const queryElement = useTemplateRef('query-element')
 
 const query = ref('')
 const queryDebounced = refDebounced(query, 500)
@@ -88,6 +95,7 @@ watch(error, () => {
                   layout
                 >
                   <UInput
+                    ref="query-element"
                     v-model="query"
                     icon="i-heroicons-magnifying-glass"
                     class="w-full"
@@ -96,7 +104,24 @@ watch(error, () => {
                     placeholder="write here"
                     :loading="status === 'pending'"
                     :disabled="!storeToken.accessToken"
-                  />
+                  >
+                    <template
+                      #trailing
+                    >
+                      <UButton
+                        v-if="query"
+                        color="neutral"
+                        variant="link"
+                        icon="i-lucide-circle-x"
+                        aria-label="Clear input"
+                        @click="query = ''"
+                      />
+                      <UKbd
+                        value="/"
+                        size="lg"
+                      />
+                    </template>
+                  </UInput>
                 </Motion>
               </motion.div>
 

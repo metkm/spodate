@@ -5,7 +5,7 @@ import type { Pagination } from '~/models/pagination'
 import type { PlaylistDetail } from '~/models/playlist'
 import type { SearchResponse } from '~/models/search'
 import type { TrackItem } from '~/models/track'
-import { fadeInVariant, listVariant } from '~/variants'
+import { fadeInVariant } from '~/variants'
 
 const router = useRouter()
 const route = useRoute('playlist-id')
@@ -137,8 +137,8 @@ useInfiniteScroll(
     </Motion>
 
     <motion.ol
-      v-if="items"
-      :variants="listVariant"
+      v-if="items.length > 0"
+      :variants="fadeInVariant"
       initial="hidden"
       animate="visible"
       exit="hidden"
@@ -153,11 +153,11 @@ useInfiniteScroll(
         </p>
 
         <ExpandableImage
-          v-if="item.track?.album.images.at(1)?.url"
-          :src="item.track?.album.images.at(1)!.url"
+          v-if="item.track?.album.images.at(2)?.url"
+          :src="item.track?.album.images.at(2)!.url"
         >
           <img
-            :src="item.track?.album.images.at(1)?.url"
+            :src="item.track?.album.images.at(2)?.url"
             class="size-20 lg:size-28 rounded"
           >
         </ExpandableImage>

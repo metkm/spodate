@@ -138,33 +138,31 @@ watch(error, () => {
                 />
               </Motion>
 
-              <AnimatePresence>
-                <motion.div
-                  v-if="!queryDebounced"
-                  layout
-                  class="flex gap-2"
-                  :exit="{ opacity: 0 }"
-                >
-                  <UButton
-                    to="https://github.com/metkm/spodate"
-                    icon="i-grommet-icons-github"
-                    size="lg"
-                    variant="ghost"
-                    square
-                    target="_blank"
-                    color="neutral"
-                  />
-                  <UButton
-                    to="https://www.linkedin.com/in/metkm/"
-                    icon="i-grommet-icons-linkedin-option"
-                    size="lg"
-                    square
-                    target="_blank"
-                    variant="ghost"
-                    color="neutral"
-                  />
-                </motion.div>
-              </AnimatePresence>
+              <motion.div
+                v-if="!queryDebounced"
+                layout
+                class="flex gap-2"
+                :exit="{ opacity: 0 }"
+              >
+                <UButton
+                  to="https://github.com/metkm/spodate"
+                  icon="i-grommet-icons-github"
+                  size="lg"
+                  variant="ghost"
+                  square
+                  target="_blank"
+                  color="neutral"
+                />
+                <UButton
+                  to="https://www.linkedin.com/in/metkm/"
+                  icon="i-grommet-icons-linkedin-option"
+                  size="lg"
+                  square
+                  target="_blank"
+                  variant="ghost"
+                  color="neutral"
+                />
+              </motion.div>
             </AnimatePresence>
           </LayoutGroup>
         </motion.div>

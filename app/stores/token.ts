@@ -3,7 +3,6 @@ export const useTokenStore = defineStore('token', () => {
   const refreshToken = ref('')
 
   const clear = () => {
-    console.log('clear toklens triggered')
     accessToken.value = ''
     refreshToken.value = ''
   }

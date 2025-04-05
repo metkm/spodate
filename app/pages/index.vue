@@ -50,7 +50,6 @@ watch(queryDebounced, async () => {
     await execute()
   }
   catch {
-    console.log('error')
     storeToken.clear()
   }
 })
@@ -65,6 +64,10 @@ watch(error, () => {
 
 <template>
   <div class="flex flex-col gap-4 justify-center w-full max-w-2xl mx-auto">
+    <div class="fixed top-5 right-5">
+      <TheColorModeSwitch />
+    </div>
+
     <LayoutGroup>
       <AnimatePresence>
         <motion.div

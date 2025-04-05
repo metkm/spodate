@@ -52,14 +52,4 @@ html {
   scrollbar-gutter: stable;
   font-family: var(--font-inter);
 }
-
-.page-enter-active,
-.page-leave-active {
-  transition: all 150ms;
-}
-.page-enter-from,
-.page-leave-to {
-  transform: translateY(20px);
-  opacity: 0;
-}
 </style>

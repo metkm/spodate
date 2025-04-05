@@ -57,12 +57,12 @@ watch(error, () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-4 justify-center p-4 w-full max-w-2xl mx-auto">
+  <div class="flex flex-col gap-4 justify-center w-full max-w-2xl mx-auto">
     <LayoutGroup>
       <AnimatePresence>
         <motion.div
           layout
-          class="flex items-end gap-2 rounded-lg sticky top-4"
+          class="flex flex-col gap-2 rounded-lg sticky top-4"
         >
           <LayoutGroup>
             <AnimatePresence>
@@ -107,7 +107,10 @@ watch(error, () => {
                 :animate="{ opacity: 1 }"
                 layout
               >
-                <TheLogin />
+                <TheLogin
+                  class="w-full"
+                  block
+                />
               </Motion>
             </AnimatePresence>
           </LayoutGroup>

@@ -22,29 +22,28 @@ const { execute: fetchTokens } = await useFetch<Tokens>('/api/token', {
     tokenStore.accessToken = data.access_token
     tokenStore.refreshToken = data.refresh_token
 
-    navigateTo('/', { replace: true })
+    await navigateTo('/')
   },
 })
 
-onMounted(() => {
-  if (!code) return
-  fetchTokens()
-})
-
-await callOnce(async () => {
-  if (!tokenStore.accessToken) return
-
-  try {
-    const response = await $fetch<User>(`${config.public.SPOTIFY_BASE_URI}/me`, {
-      headers: {
-        Authorization: `Bearer ${tokenStore.accessToken}`,
-      },
-    })
-
-    background.value = response.images.at(0)?.url
+onMounted(async () => {
+  if (code) {
+    await fetchTokens()
   }
-  catch {
-    tokenStore.clear()
+
+  if (tokenStore.accessToken) {
+    try {
+      const response = await $fetch<User>(`${config.public.SPOTIFY_BASE_URI}/me`, {
+        headers: {
+          Authorization: `Bearer ${tokenStore.accessToken}`,
+        },
+      })
+
+      background.value = response.images.at(0)?.url
+    }
+    catch {
+      tokenStore.clear()
+    }
   }
 })
 </script>

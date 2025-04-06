@@ -3,7 +3,7 @@ const background = useState('background', () => '')
 </script>
 
 <template>
-  <div class="absolute inset-28 -z-10 blur-[200px] opacity-20">
+  <div class="absolute inset-28 -z-10 blur-[150px] opacity-20">
     <Transition
       v-if="background"
       enter-active-class="transition-all duration-500"

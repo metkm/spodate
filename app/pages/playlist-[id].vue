@@ -12,7 +12,7 @@ const route = useRoute('playlist-id')
 const id = route.params.id
 
 const items = useState<TrackItem[]>(`playlist-items-${id}`, () => [])
-const background = useState('background', () => '')
+const background = useState('background')
 
 const offset = ref(0)
 const limit = ref(20)
@@ -26,7 +26,8 @@ const { data } = await useSpotifyFetch<PlaylistDetail>(`/playlists/${id}`, {
   onResponse: (response) => {
     const data = response.response._data as PlaylistDetail
     items.value.push(...(data.tracks?.items || []))
-    background.value = data.images?.at(0)?.url || ''
+
+    background.value = data.images?.at(0)?.url
   },
 } as UseFetchOptions<PlaylistDetail>)
 

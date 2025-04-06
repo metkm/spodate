@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { Tokens } from './models/tokens'
+import type { User } from './models/user'
 
 const route = useRoute()
 const tokenStore = useTokenStore()
+const config = useRuntimeConfig()
 
 const background = useState('background')
 
@@ -27,6 +29,23 @@ const { execute: fetchTokens } = await useFetch<Tokens>('/api/token', {
 onMounted(() => {
   if (!code) return
   fetchTokens()
+})
+
+await callOnce(async () => {
+  if (!tokenStore.accessToken) return
+
+  try {
+    const response = await $fetch<User>(`${config.public.SPOTIFY_BASE_URI}/me`, {
+      headers: {
+        Authorization: `Bearer ${tokenStore.accessToken}`,
+      },
+    })
+
+    background.value = response.images.at(0)?.url
+  }
+  catch {
+    tokenStore.clear()
+  }
 })
 </script>
 

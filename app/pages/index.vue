@@ -189,10 +189,10 @@ watch(error, () => {
               class="flex items-center gap-2 hover:bg-[var(--ui-color-neutral-100)]/10 rounded"
               :to="{ name: 'playlist-id', params: { id: item.id } }"
             >
-              <motion.img
+              <ExpandableImage
                 :src="item.images?.at(0)?.url"
-                class="size-20 rounded"
-                :layout-id="`image-${item.id}`"
+                hold-key="Shift"
+                class="size-20 rounded shrink-0"
               />
 
               <div>

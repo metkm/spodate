@@ -31,29 +31,34 @@ onMounted(() => {
     @mouseleave="mouseOver = false"
   >
     <AnimatePresence>
-      <motion.div
+      <div
         v-if="shouldExpand"
-        class="fixed inset-y-10 aspect-square"
-        :exit="{ opacity: 0 }"
-        :initial="{ opacity: 0 }"
-        :animate="{ opacity: 1 }"
+        class="fixed inset-0 flex items-center"
       >
-        <motion.img
-          :src="src"
-          class="w-full h-full object-cover rounded"
-          :layout-id="`image-${src}`"
-          layout
-        />
-      </motion.div>
+        <motion.div
+          class="h-full aspect-square mx-auto p-8"
+          :exit="{ opacity: 0 }"
+          :initial="{ opacity: 0 }"
+          :animate="{ opacity: 1 }"
+        >
+          <motion.img
+            :src="src"
+            class="w-full h-full object-cover rounded-lg"
+            layout
+            v-bind="$attrs"
+          />
+        </motion.div>
+      </div>
+
       <motion.img
         v-else
-        :layout-id="`image-${src}`"
         layout
         :exit="{ opacity: 0 }"
         :initial="{ opacity: 0 }"
         :animate="{ opacity: 1 }"
         :src="src"
-        class="w-full h-full object-cover rounded"
+        class="w-full h-full object-cover rounded-lg"
+        v-bind="$attrs"
       />
     </AnimatePresence>
   </div>

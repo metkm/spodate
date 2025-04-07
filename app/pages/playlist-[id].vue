@@ -18,14 +18,14 @@ const offset = ref(0)
 const limit = ref(20)
 
 const { data: searchCache } = useNuxtData<SearchResponse>('playlists')
-const { data: fetchCache } = useNuxtData<PlaylistDetail>(`playlist-${id}`)
+// const { data: fetchCache } = useNuxtData<PlaylistDetail>(`playlist-${id}`)
 
 const { data, error } = await useSpotifyFetch<PlaylistDetail>(`/playlists/${id}`, {
   key: `playlist-${id}`,
   default: () => {
     return searchCache.value?.playlists.items.find(item => item?.id === id)
   },
-  getCachedData: () => fetchCache.value,
+  // getCachedData: () => fetchCache.value,
   onResponse: (response) => {
     const data = response.response._data as PlaylistDetail
     items.value.push(...(data.tracks?.items || []))

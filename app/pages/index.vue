@@ -197,11 +197,14 @@ watch(error, () => {
           </LayoutGroup>
         </motion.div>
 
-        <motion.ul
-          v-if="items.length > 0"
+        <!--
           :initial="{ opacity: 0, transition: { delay: 0.250 } }"
           :animate="{ opacity: 1, transition: { delay: 0.250 } }"
           :exit="{ opacity: 0 }"
+        -->
+        <motion.ul
+          v-if="items.length > 0"
+          layout
           class="flex flex-col gap-4 grow"
         >
           <li
@@ -216,6 +219,7 @@ watch(error, () => {
                 :src="item.images?.at(0)?.url"
                 hold-key="Shift"
                 class="size-20 rounded shrink-0"
+                :layout-id="`image-${item.id}`"
               />
 
               <div>

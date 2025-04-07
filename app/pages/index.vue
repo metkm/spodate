@@ -21,7 +21,7 @@ const queryElement = useTemplateRef('query-element')
 const query = useRouteQuery('q') as Ref<string | undefined>
 const queryDebounced = refDebounced(query, 500)
 
-const items = ref<Playlist[]>([])
+const items = useState<Playlist[]>('items', () => [])
 const offset = ref(20)
 
 const { status, error, execute, clear } = await useSpotifyFetch<SearchResponse>('/search', {
@@ -55,7 +55,7 @@ watch(queryDebounced, async () => {
     return
   }
 
-  if (queryDebounced.value.includes('playlist/')) {
+  if (queryDebounced.value?.includes('playlist/')) {
     const playlistId = queryDebounced.value.split('playlist/')
       .at(-1)
       ?.split('?')
@@ -69,6 +69,8 @@ watch(queryDebounced, async () => {
         id: playlistId,
       },
     })
+
+    return
   }
 
   try {
@@ -77,8 +79,6 @@ watch(queryDebounced, async () => {
   catch {
     storeToken.clear()
   }
-}, {
-  immediate: true,
 })
 
 watch(error, () => {

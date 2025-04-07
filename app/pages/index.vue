@@ -47,6 +47,22 @@ watch(queryDebounced, async () => {
     return
   }
 
+  if (queryDebounced.value.includes('playlist/')) {
+    const playlistId = queryDebounced.value.split('playlist/')
+      .at(-1)
+      ?.split('?')
+      .at(0)
+
+    if (!playlistId) return
+
+    await navigateTo({
+      name: 'playlist-id',
+      params: {
+        id: playlistId,
+      },
+    })
+  }
+
   try {
     await execute()
   }

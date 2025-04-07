@@ -15,8 +15,10 @@ export const useSpotifyFetch = <T>(
     headers: {
       Authorization: authorization,
     },
-    onResponseError() {
-      tokenStore.clear()
+    onResponseError(response) {
+      if (response.response.status === 401) {
+        tokenStore.clear()
+      }
     },
   })
 }

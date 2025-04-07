@@ -18,7 +18,7 @@ const offset = ref(0)
 const limit = ref(20)
 
 const { data: cache } = useNuxtData<SearchResponse>('playlists')
-const { data } = await useSpotifyFetch<PlaylistDetail>(`/playlists/${id}`, {
+const { data, error } = await useSpotifyFetch<PlaylistDetail>(`/playlists/${id}`, {
   lazy: true,
   default: () => {
     return cache.value?.playlists.items.find(item => item?.id === id)
@@ -71,112 +71,130 @@ useInfiniteScroll(
 <template>
   <div class="flex flex-col gap-4 w-full">
     <div
-      v-if="data"
-      class="flex flex-col sm:flex-row gap-4"
+      v-if="error?.statusCode === 400"
+      class="flex flex-col gap-4 items-center justify-center grow"
     >
-      <Motion :layout-id="`image-${data.id}`">
-        <img
-          :src="data.images?.at(0)?.url"
-          class="w-full sm:size-44 lg:size-80 transition-all rounded"
-        >
-      </Motion>
+      <p class="text-(--ui-text-dimmed) font-medium text-lg">
+        Playlist Not Found
+      </p>
+      <UButton
+        to="/"
+        variant="soft"
+        size="lg"
+      >
+        Go back to homepage
+      </UButton>
+    </div>
 
-      <div class="flex flex-col gap-4 justify-between py-2">
-        <div class="flex flex-col gap-2 [&_span]:text-(--ui-text-dimmed)">
-          <motion.p
-            :layout-id="`title-${data.id}`"
-            class="lg:text-xl"
+    <template v-else>
+      <div
+        v-if="data"
+        class="flex flex-col sm:flex-row gap-4"
+      >
+        <Motion :layout-id="`image-${data.id}`">
+          <img
+            :src="data.images?.at(0)?.url"
+            class="w-full sm:size-44 lg:size-80 transition-all rounded"
           >
-            {{ data.name }}
-          </motion.p>
+        </Motion>
 
-          <motion.p
-            v-if="data.tracks?.total"
+        <div class="flex flex-col gap-4 justify-between py-2">
+          <div class="flex flex-col gap-2 [&_span]:text-(--ui-text-dimmed)">
+            <motion.p
+              :layout-id="`title-${data.id}`"
+              class="lg:text-xl"
+            >
+              {{ data.name }}
+            </motion.p>
+
+            <motion.p
+              v-if="data.tracks?.total"
+              class="bg-(--ui-bg-elevated) rounded-full w-fit px-4 py-1"
+              :variants="fadeInVariant"
+              initial="hidden"
+              animate="visible"
+            >
+              {{ data.tracks?.total }} <span>songs</span>
+            </motion.p>
+            <p
+              v-if="data.followers?.total"
+              class="bg-(--ui-bg-elevated) rounded-full w-fit px-4 py-1"
+            >
+              {{ data.followers?.total }} <span>saves</span>
+            </p>
+          </div>
+
+          <motion.a
+            :href="data.external_urls.spotify"
+            target="_blank"
             class="bg-(--ui-bg-elevated) rounded-full w-fit px-4 py-1"
             :variants="fadeInVariant"
             initial="hidden"
             animate="visible"
           >
-            {{ data.tracks?.total }} <span>songs</span>
-          </motion.p>
-          <p
-            v-if="data.followers?.total"
-            class="bg-(--ui-bg-elevated) rounded-full w-fit px-4 py-1"
-          >
-            {{ data.followers?.total }} <span>saves</span>
-          </p>
+            <span class="text-(--ui-text-dimmed)">Playlist by</span>
+            {{ data.owner.display_name }}
+          </motion.a>
         </div>
-
-        <motion.a
-          :href="data.external_urls.spotify"
-          target="_blank"
-          class="bg-(--ui-bg-elevated) rounded-full w-fit px-4 py-1"
-          :variants="fadeInVariant"
-          initial="hidden"
-          animate="visible"
-        >
-          <span class="text-(--ui-text-dimmed)">Playlist by</span>
-          {{ data.owner.display_name }}
-        </motion.a>
       </div>
-    </div>
 
-    <Motion
-      :variants="fadeInVariant"
-      initial="hidden"
-      animate="visible"
-      exit="hidden"
-    >
-      <UButton
-        block
-        class="w-24"
-        leading-icon="i-heroicons-arrow-left-circle"
-        @click="router.back()"
+      <Motion
+        :variants="fadeInVariant"
+        initial="hidden"
+        animate="visible"
+        exit="hidden"
       >
-        Back
-      </UButton>
-    </Motion>
-
-    <motion.ol
-      v-if="items.length > 0"
-      :variants="fadeInVariant"
-      initial="hidden"
-      animate="visible"
-      exit="hidden"
-    >
-      <motion.li
-        v-for="(item, index) in items"
-        :key="item.track?.id"
-        class="flex items-center gap-2 px-2 p-2 hover:bg-[var(--ui-color-neutral-100)]/10 rounded"
-      >
-        <p class="w-9 shrink-0 text-center">
-          {{ index + 1 }}
-        </p>
-
-        <ExpandableImage
-          v-if="item.track?.album.images.at(2)?.url"
-          :src="item.track?.album.images.at(2)!.url"
+        <UButton
+          block
+          class="w-24"
+          leading-icon="i-heroicons-arrow-left-circle"
+          @click="router.back()"
         >
-          <img
-            :src="item.track?.album.images.at(2)?.url"
-            class="size-20 lg:size-28 rounded"
-          >
-        </ExpandableImage>
+          Back
+        </UButton>
+      </Motion>
 
-        <div class="py-2">
-          <p class="line-clamp-2 w-full">
-            {{ item.track?.name }}
+      <motion.ol
+        v-if="items.length > 0"
+        :variants="fadeInVariant"
+        initial="hidden"
+        animate="visible"
+        exit="hidden"
+      >
+        <motion.li
+          v-for="(item, index) in items"
+          :key="item.track?.id"
+          class="flex items-center gap-2 px-2 p-2 hover:bg-[var(--ui-color-neutral-100)]/10 rounded"
+        >
+          <p class="w-9 shrink-0 text-center">
+            {{ index + 1 }}
           </p>
 
-          <ClientOnly>
-            <p class="text-[var(--ui-text-dimmed)]">
-              Added at {{ new Date(item.added_at).toLocaleString() }}
-            </p>
-          </ClientOnly>
-        </div>
-      </motion.li>
+          <ExpandableImage
+            v-if="item.track?.album.images.at(2)?.url"
+            :src="item.track?.album.images.at(2)!.url"
+          >
+            <img
+              :src="item.track?.album.images.at(2)?.url"
+              class="size-20 lg:size-28 rounded"
+            >
+          </ExpandableImage>
 
-      <TheLoadingSpinner v-if="status === 'pending'" />
-    </motion.ol>
+          <div class="py-2">
+            <p class="line-clamp-2 w-full">
+              {{ item.track?.name }}
+            </p>
+
+            <ClientOnly>
+              <p class="text-[var(--ui-text-dimmed)]">
+                Added at {{ new Date(item.added_at).toLocaleString() }}
+              </p>
+            </ClientOnly>
+          </div>
+        </motion.li>
+
+        <TheLoadingSpinner v-if="status === 'pending'" />
+      </motion.ol>
+    </template>
   </div>
 </template>

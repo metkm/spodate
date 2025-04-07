@@ -17,18 +17,22 @@ const background = useState('background')
 const offset = ref(0)
 const limit = ref(20)
 
-const { data: cache } = useNuxtData<SearchResponse>('playlists')
+const { data: searchCache } = useNuxtData<SearchResponse>('playlists')
+const { data: fetchCache } = useNuxtData<PlaylistDetail>(`playlist-${id}`)
+
 const { data, error } = await useSpotifyFetch<PlaylistDetail>(`/playlists/${id}`, {
-  lazy: true,
+  key: `playlist-${id}`,
   default: () => {
-    return cache.value?.playlists.items.find(item => item?.id === id)
+    return searchCache.value?.playlists.items.find(item => item?.id === id)
   },
+  getCachedData: () => fetchCache.value,
   onResponse: (response) => {
     const data = response.response._data as PlaylistDetail
     items.value.push(...(data.tracks?.items || []))
 
     background.value = data.images?.at(0)?.url
   },
+  lazy: true,
 } as UseFetchOptions<PlaylistDetail>)
 
 const {

@@ -22,15 +22,14 @@ const query = useRouteQuery('q') as Ref<string | undefined>
 const queryDebounced = refDebounced(query, 500)
 
 const items = ref<Playlist[]>([])
+const offset = ref(20)
 
 const { status, error, execute, clear } = await useSpotifyFetch<SearchResponse>('/search', {
   key: 'playlists',
   query: {
     q: queryDebounced,
     type: 'playlist',
-  },
-  onRequest() {
-    items.value = []
+    offset,
   },
   onResponse({ response }) {
     const data = response._data as SearchResponse
@@ -39,6 +38,15 @@ const { status, error, execute, clear } = await useSpotifyFetch<SearchResponse>(
   },
   watch: false,
   immediate: false,
+})
+
+useInfiniteScroll(document, async () => {
+  offset.value += 20
+  await execute()
+}, {
+  distance: 20,
+  canLoadMore: () => items.value.length > 0 && status.value !== 'pending',
+  interval: 500,
 })
 
 watch(queryDebounced, async () => {
@@ -194,7 +202,6 @@ watch(error, () => {
           :initial="{ opacity: 0, transition: { delay: 0.250 } }"
           :animate="{ opacity: 1, transition: { delay: 0.250 } }"
           :exit="{ opacity: 0 }"
-          layout
           class="flex flex-col gap-4 grow"
         >
           <li

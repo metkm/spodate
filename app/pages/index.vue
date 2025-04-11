@@ -201,22 +201,17 @@ watch(error, () => {
           </LayoutGroup>
         </motion.div>
 
-        <!--
-          :initial="{ opacity: 0, transition: { delay: 0.250 } }"
-          :animate="{ opacity: 1, transition: { delay: 0.250 } }"
-          :exit="{ opacity: 0 }"
-        -->
         <motion.ul
           v-if="items.length > 0"
           layout
-          class="flex flex-col gap-4 grow"
+          class="flex flex-col grow"
         >
           <li
             v-for="item in items"
             :key="item.id"
           >
             <NuxtLink
-              class="flex items-center gap-2 hover:bg-[var(--ui-color-neutral-100)]/10 rounded"
+              class="flex items-center gap-2 hover:bg-[var(--ui-color-neutral-100)]/10 p-2 rounded-xl"
               :to="{ name: 'playlist-id', params: { id: item.id } }"
             >
               <ExpandableImage

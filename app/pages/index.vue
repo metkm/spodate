@@ -49,10 +49,14 @@ useInfiniteScroll(document, async () => {
   interval: 500,
 })
 
-watch(queryDebounced, async () => {
+watch(queryDebounced, async (newValue, oldValue) => {
   if (!queryDebounced.value) {
     items.value = []
     return
+  }
+
+  if (newValue !== oldValue) {
+    items.value = []
   }
 
   if (queryDebounced.value?.includes('playlist/')) {

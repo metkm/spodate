@@ -34,6 +34,8 @@ onMounted(() => {
       <div
         v-if="shouldExpand"
         class="fixed inset-0 flex items-center"
+        @mouseenter="mouseOver = true"
+        @mouseleave="mouseOver = false"
       >
         <motion.div
           class="h-full aspect-square mx-auto p-8"
@@ -59,6 +61,8 @@ onMounted(() => {
         :src="src"
         class="w-full h-full object-cover rounded-lg"
         v-bind="$attrs"
+        @mouseenter="mouseOver = true"
+        @mouseleave="mouseOver = false"
       />
     </AnimatePresence>
   </div>

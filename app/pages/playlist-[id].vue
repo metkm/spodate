@@ -175,22 +175,19 @@ useInfiniteScroll(
           </p>
 
           <ExpandableImage
-            v-if="item.track?.album.images.at(2)?.url"
-            :src="item.track?.album.images.at(2)!.url"
-          >
-            <img
-              :src="item.track?.album.images.at(2)?.url"
-              class="size-20 lg:size-28 rounded"
-            >
-          </ExpandableImage>
+            v-if="item.track?.album.images.at(1)?.url"
+            :src="item.track?.album.images.at(1)!.url"
+            class="size-20 shrink-0 lg:size-28 rounded"
+            loading="lazy"
+          />
 
           <div class="py-2">
-            <p class="line-clamp-2 w-full">
+            <p class="line-clamp-2 w-full text-sm lg:text-base">
               {{ item.track?.name }}
             </p>
 
             <ClientOnly>
-              <p class="text-[var(--ui-text-dimmed)]">
+              <p class="text-[var(--ui-text-dimmed)] text-xs lg:text-sm">
                 Added at {{ new Date(item.added_at).toLocaleString() }}
               </p>
             </ClientOnly>

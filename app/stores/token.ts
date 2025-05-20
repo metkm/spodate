@@ -14,8 +14,9 @@ export const useTokenStore = defineStore('token', () => {
   }
 }, {
   persist: {
-    storage: piniaPluginPersistedstate.cookies({
-      maxAge: 604800,
-    }),
+    storage: piniaPluginPersistedstate.localStorage(),
+    // storage: piniaPluginPersistedstate.cookies({
+    //   maxAge: 604800,
+    // }),
   },
 })

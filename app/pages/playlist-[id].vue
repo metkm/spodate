@@ -66,8 +66,18 @@ useInfiniteScroll(
     throttle: 1000,
     interval: 1000,
     distance: 50,
-    canLoadMore: () =>
-      status.value !== 'pending' && (!!tracks.value?.next || !!data.value?.tracks?.next),
+    canLoadMore: () => {
+      if (status.value === 'pending') {
+        return false
+      }
+
+      // the infinite scroll started
+      if (offset.value > 0) {
+        return !!tracks.value?.next
+      }
+
+      return !!data.value?.tracks?.next
+    },
   },
 )
 </script>

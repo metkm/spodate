@@ -113,7 +113,7 @@ useInfiniteScroll(
         </Motion>
 
         <div class="flex flex-col gap-4 justify-between py-2">
-          <div class="flex flex-col gap-2 [&_span]:text-(--ui-text-dimmed)">
+          <div class="flex flex-col gap-4 [&_span]:text-(--ui-text-dimmed)">
             <motion.p
               :layout-id="`title-${data.id}`"
               class="lg:text-xl"
